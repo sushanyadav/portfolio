@@ -1,0 +1,64 @@
+@utility container {
+  width: 100%;
+  margin-inline: auto;
+  padding-inline: calc(var(--spacing) * 3);
+
+  @variant xs {
+    max-width: 100%;
+  }
+
+  @variant sm {
+    max-width: var(--breakpoint-sm);
+  }
+
+  @variant md {
+    max-width: 90rem;
+    padding-inline: calc(var(--spacing) * 10);
+  }
+
+  @variant lg {
+    max-width: 90rem;
+    padding-inline: calc(var(--spacing) * 20);
+  }
+
+  @variant xl {
+    max-width: 90rem;
+    padding-inline: calc(var(--spacing) * 20);
+  }
+
+  @variant 2xl {
+    max-width: 90rem;
+    padding-inline: calc(var(--spacing) * 20);
+  }
+
+  @variant content {
+    max-width: 90rem;
+    padding-inline: calc(var(--spacing) * 20);
+  }
+
+  @variant 3xl {
+    max-width: 90rem;
+    padding-inline: calc(var(--spacing) * 20);
+  }
+}
+
+@utility focus-ring {
+  @apply outline-2 outline-offset-[3px] outline-transparent;
+}
+
+@utility hitbox {
+  position: relative;
+  &:before {
+    content: '';
+    position: absolute;
+    display: block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    min-height: var(--hitbox-size, 2.75rem);
+    min-width: var(--hitbox-size, 2.75rem);
+    z-index: 20;
+  }
+}

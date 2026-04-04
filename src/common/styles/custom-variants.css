@@ -1,0 +1,9 @@
+@custom-variant touch (hover: none) and ((pointer: coarse) or (pointer: none));
+
+@custom-variant no-touch (hover: hover);
+
+@custom-variant phover {
+  @media (pointer: fine) and (hover: hover) {
+    @slot;
+  }
+}

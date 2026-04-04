@@ -1,0 +1,37 @@
+{
+  // ensures that vscode uses the version installed within the project.
+  "typescript.tsdk": "node_modules/typescript/lib",
+  // tailwind association for intellisense
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.formatOnSave": true,
+  "[javascript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "source.addMissingImports": "explicit"
+    }
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "oxc.oxc-vscode",
+    "editor.codeActionsOnSave": {
+      "source.addMissingImports": "explicit"
+    }
+  },
+  "editor.rulers": [80],
+  "editor.codeActionsOnSave": {
+    "source.addMissingImports": "explicit"
+  },
+  // Show in vscode "Problems" tab when there are errors
+  "typescript.tsserver.experimental.enableProjectDiagnostics": true,
+  // Use absolute import for typescript files
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  // required for tailwind v4 for intellisense to work
+  "tailwindCSS.experimental.configFile": "src/common/styles/main.css"
+}
