@@ -2,10 +2,9 @@
   html {
     scroll-behavior: smooth;
     font-size: 16px;
-    -ms-text-size-adjust: 100%;
     -webkit-text-size-adjust: 100%;
-    -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   *,
@@ -15,17 +14,24 @@
   }
 
   html,
-  body,
-  #__next {
-    height: calc(
+  body {
+    min-height: calc(
       100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
     );
   }
-}
 
-@layer base {
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-text-primary);
+  }
+
   button:not(:disabled),
   [role='button']:not(:disabled) {
     cursor: pointer;
+  }
+
+  a,
+  button {
+    @apply focus-ring;
   }
 }

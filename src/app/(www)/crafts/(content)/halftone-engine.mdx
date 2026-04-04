@@ -1,0 +1,17 @@
+export const metadata = {
+  title: 'Halftone Engine',
+  description: 'converts images and video into dot patterns in real-time using SVG filters and Canvas 2D. no shaders.',
+  publishedAt: '2025-09-18',
+  tags: ['creative', 'canvas'],
+  media: [
+    { type: 'image', src: '/images/crafts/dots-pattern.webp', alt: 'Halftone rendering example' },
+  ],
+};
+
+A rendering engine that converts images and video into halftone dot patterns in real-time. No shaders — just SVG filters and Canvas 2D.
+
+## Techniques
+
+- **SVG filter chain** — feTurbulence + feComponentTransfer for dot quantization
+- **Canvas sampling** — brightness-to-radius mapping per grid cell
+- **Blend modes** — multiply and screen compositing for color halftone

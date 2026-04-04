@@ -6,11 +6,13 @@ import {
   SITE_NAME,
 } from '@/common/tools/seo';
 
-import { Hero } from '@/modules/homepage/components/hero';
+import { IntroSection } from '@/modules/homepage/components/intro-section';
+import { RecentCrafts } from '@/modules/homepage/components/recent-crafts';
+import { RecentThoughts } from '@/modules/homepage/components/recent-thoughts';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generatePageMetadata({
-    title: `${SITE_NAME} - ${SITE_DESCRIPTION}`,
+    title: SITE_NAME,
     description: SITE_DESCRIPTION,
     path: '',
     type: 'website',
@@ -19,8 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Homepage() {
   return (
-    <div className="grid place-items-center">
-      <Hero />
+    <div className="container pt-16 pb-32">
+      <IntroSection />
+      <RecentThoughts />
+      <RecentCrafts />
     </div>
   );
 }

@@ -1,14 +1,18 @@
-import { Metadata, Viewport } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { PropsWithChildren } from 'react';
 
-import { inter } from '@/common/fonts/inter';
+import { geistMono, geistSans } from '@/common/fonts/geist';
 import { cn } from '@/common/functions/cn';
+import { ThemeProvider } from '@/common/providers/theme-provider';
 import { SITE_URL } from '@/common/tools/seo';
 
 import '@/common/styles/main.css';
 
 export const viewport: Viewport = {
-  themeColor: 'black',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fafafa' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -30,14 +34,17 @@ export const metadata: Metadata = {
   },
 };
 
-const GlobalLayout = ({ children }: PropsWithChildren) => {
+export default function GlobalLayout({ children }: PropsWithChildren) {
   return (
-    <html className={cn(inter.variable)} lang="en">
-      {/* // TODO: replace with your site name */}
-      <meta content="Example" name="apple-mobile-web-app-title" />
-      <body>{children}</body>
+    <html
+      className={cn(geistSans.variable, geistMono.variable)}
+      data-scroll-behavior="smooth"
+      lang="en"
+      suppressHydrationWarning
+    >
+      <body>
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
-};
-
-export default GlobalLayout;
+}

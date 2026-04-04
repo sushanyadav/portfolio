@@ -7,9 +7,9 @@ export const SITE_URL =
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : 'https://example.com');
 
-export const SITE_NAME = 'Example'; // TODO: replace with your site name
-export const SITE_DESCRIPTION = 'Example site description'; // TODO: replace with your site description
-export const TWITTER_HANDLE = '@wilsonhou';
+export const SITE_NAME = 'sushan.';
+export const SITE_DESCRIPTION = 'design engineer';
+export const TWITTER_HANDLE = '@__sushan';
 export const DEFAULT_OG_IMAGE = '/opengraph-image.png';
 export const DEFAULT_OG_TWITTER_IMAGE = '/twitter-image.png';
 

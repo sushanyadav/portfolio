@@ -1,16 +1,14 @@
-import { PropsWithChildren } from 'react';
+import type { PropsWithChildren } from 'react';
 
-import { Footer } from '@/common/components/core-layout/footer';
 import { Header } from '@/common/components/core-layout/header';
+import { PageBurst } from '@/common/components/core-layout/page-burst';
 
-interface CoreLayoutProps {}
-
-export function CoreLayout({ children }: PropsWithChildren<CoreLayoutProps>) {
+export function CoreLayout({ children }: PropsWithChildren) {
   return (
-    <div className="relative flex h-full min-h-full flex-col">
+    <PageBurst>
       <Header />
-      <main className="flex flex-1 flex-col [&>div]:flex-1">{children}</main>
-      <Footer />
-    </div>
+      <main className="flex flex-1 flex-col">{children}</main>
+    </PageBurst>
   );
 }
+

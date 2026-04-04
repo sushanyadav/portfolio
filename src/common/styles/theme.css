@@ -1,19 +1,44 @@
 :root {
-  --header-height: 4.5rem;
+  --color-bg: #fafafa;
+  --color-bg-secondary: #f0f0f0;
+  --color-text-primary: #171717;
+  --color-text-secondary: #525252;
+  --color-text-tertiary: #a3a3a3;
+  --color-border: #e5e5e5;
+  --color-border-hover: #d4d4d4;
+  --color-surface-hover: rgba(0, 0, 0, 0.04);
+  --color-accent: #1768FF;
 }
 
-/* FONTS */
-@theme {
-  --font-sans: var(--font-inter);
+[data-theme='dark'] {
+  --color-bg: #0a0a0a;
+  --color-bg-secondary: #171717;
+  --color-text-primary: #ededed;
+  --color-text-secondary: #a3a3a3;
+  --color-text-tertiary: #737373;
+  --color-border: #262626;
+  --color-border-hover: #404040;
+  --color-surface-hover: rgba(255, 255, 255, 0.06);
+  --color-accent: #4D8EFF;
 }
 
-/* COLORS */
 @theme {
-  --color-primary: #000;
-}
+  --header-height: 3.5rem;
+  --content-width: 43rem;
 
-/* BREAKPOINTS */
-@theme {
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --color-bg: var(--color-bg);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-tertiary: var(--color-text-tertiary);
+  --color-border: var(--color-border);
+  --color-border-hover: var(--color-border-hover);
+  --color-surface-hover: var(--color-surface-hover);
+  --color-accent: var(--color-accent);
+
   --breakpoint-xs: 21.875rem;
   --breakpoint-sm: 40rem;
   --breakpoint-md: 48rem;
@@ -22,11 +47,7 @@
   --breakpoint-2xl: 90rem;
   --breakpoint-3xl: 125rem;
   --breakpoint-content: 90rem;
-}
 
-/* EASING FUNCTIONS */
-@theme {
-  /* Easing functions */
   --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
   --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
   --ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
