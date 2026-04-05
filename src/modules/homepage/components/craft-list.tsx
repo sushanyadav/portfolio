@@ -3,7 +3,7 @@
 import { motion, useMotionValue, useSpring } from 'motion/react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/common/functions/cn';
 
@@ -13,15 +13,20 @@ const MAX_W = 200;
 const THUMB_W = 44;
 const THUMB_H = Math.round(THUMB_W * (9 / 16));
 
-const springConfig = { stiffness: 400, damping: 35, mass: 0.8 };
+const springX = { stiffness: 150, damping: 20, mass: 1 };
+const springY = { stiffness: 800, damping: 35, mass: 0.3 };
+
+const springScale = { stiffness: 400, damping: 35, mass: 0.8 };
 
 function MediaEl({
   craft,
   className,
+  loading,
   onLoad,
 }: {
   craft: CraftPreviewItem;
   className?: string;
+  loading?: 'eager' | 'lazy';
   onLoad?: (slug: string, w: number, h: number) => void;
 }) {
   if (!craft.previewSrc) return null;
@@ -52,8 +57,9 @@ function MediaEl({
   return (
     <Image
       alt=""
-      className={cn('h-full w-full object-cover', className)}
-      height={THUMB_H}
+      className={cn('object-cover', className)}
+      fill
+      loading={loading}
       onLoad={
         onLoad
           ? (e) =>
@@ -66,25 +72,32 @@ function MediaEl({
       }
       src={craft.previewSrc}
       unoptimized
-      width={THUMB_W}
     />
   );
 }
 
 export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
+  const [canHover, setCanHover] = useState(false);
   const [hovered, setHovered] = useState<number | null>(null);
   const [sizes, setSizes] = useState<Record<string, { w: number; h: number }>>(
     {},
   );
 
+  useEffect(() => {
+    setCanHover(
+      window.matchMedia('(pointer: fine) and (hover: hover)').matches,
+    );
+  }, []);
+
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const x = useSpring(mouseX, springConfig);
-  const y = useSpring(mouseY, springConfig);
-  const scale = useSpring(0, springConfig);
+  const x = useSpring(mouseX, springX);
+  const y = useSpring(mouseY, springY);
+  const scale = useSpring(0, springScale);
 
   const thumbRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isActive = useRef(false);
+  const isSwitching = useRef(false);
 
   const onMediaLoad = useCallback(
     (slug: string, naturalW: number, naturalH: number) => {
@@ -99,8 +112,9 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
 
   const handleEnter = useCallback(
     (i: number) => {
+      if (!canHover) return;
       if (!isActive.current) {
-        // First hover — spring from thumb to cursor
+        // First hover — jump to thumb position, spring to cursor
         const thumb = thumbRefs.current[i];
         if (thumb) {
           const rect = thumb.getBoundingClientRect();
@@ -110,17 +124,22 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
         scale.jump(THUMB_W / MAX_W);
         scale.set(1);
         isActive.current = true;
+        isSwitching.current = false;
+      } else {
+        isSwitching.current = true;
       }
       setHovered(i);
     },
-    [x, y, scale],
+    [x, y, scale, canHover],
   );
 
   const handleLeave = useCallback(() => {
+    if (!canHover) return;
     scale.set(0);
     isActive.current = false;
+    isSwitching.current = false;
     setHovered(null);
-  }, [scale]);
+  }, [scale, canHover]);
 
   const listHovered = hovered !== null;
   const activeCraft = hovered !== null ? crafts[hovered] : null;
@@ -130,7 +149,7 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
   return (
     <>
       {/* Floating preview */}
-      <motion.div
+      {canHover && <motion.div
         aria-hidden
         className="pointer-events-none fixed left-0 top-0 z-50 overflow-hidden transition-[width,height] duration-500 ease-out-quart"
         style={{
@@ -147,7 +166,11 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
           return (
             <div
               key={c.slug}
-              className="absolute inset-0 transition-opacity duration-500 ease-out"
+              className={cn(
+                'absolute inset-0',
+                isSwitching.current &&
+                  'transition-opacity duration-500 ease-out',
+              )}
               style={{
                 opacity: hovered === i ? 1 : 0,
                 zIndex: hovered === i ? 1 : 0,
@@ -157,16 +180,20 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
             </div>
           );
         })}
-      </motion.div>
+      </motion.div>}
 
       {/* Craft rows */}
       <div
         className="mt-4 flex flex-col"
         onMouseLeave={handleLeave}
-        onMouseMove={(e) => {
-          mouseX.set(e.clientX + 20);
-          mouseY.set(e.clientY - 70);
-        }}
+        onMouseMove={
+          canHover
+            ? (e) => {
+                mouseX.set(e.clientX + 20);
+                mouseY.set(e.clientY - 70);
+              }
+            : undefined
+        }
       >
         {crafts.map((c, i) => {
           const isItemActive = hovered === i;
@@ -187,12 +214,36 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
                     ref={(el) => {
                       thumbRefs.current[i] = el;
                     }}
-                    className="shrink-0 overflow-hidden"
+                    className="relative grid shrink-0 place-items-center overflow-hidden"
                     style={{ width: THUMB_W, height: THUMB_H }}
                   >
-                    <MediaEl
-                      className={isItemActive ? 'opacity-0' : undefined}
-                      craft={c}
+                    {/* Thumbnail image */}
+                    <div
+                      className={cn(
+                        'relative [grid-area:1/1] overflow-hidden transition-opacity duration-200 ease-out',
+                        isItemActive && 'opacity-0',
+                      )}
+                      style={{ width: THUMB_W, height: THUMB_H }}
+                    >
+                      <MediaEl craft={c} loading="eager" />
+                    </div>
+                    {/* Dot → arrow morph via clip-path */}
+                    <span
+                      className={cn(
+                        'pointer-events-none [grid-area:1/1] bg-accent',
+                        isItemActive
+                          ? '[clip-path:polygon(0%_90%,80%_10%,35%_10%,35%_0%,100%_0%,100%_65%,90%_65%,90%_10%,10%_100%)]'
+                          : '[clip-path:polygon(0%_100%,0%_0%,35%_0%,35%_0%,100%_0%,100%_65%,100%_100%,90%_100%,10%_100%)]',
+                      )}
+                      style={{
+                        width: 14,
+                        height: 14,
+                        marginTop: 1,
+                        opacity: isItemActive ? 1 : 0,
+                        transition: isItemActive
+                          ? 'opacity 100ms ease-out, clip-path 200ms ease-out 120ms'
+                          : 'clip-path 150ms ease-out, opacity 100ms ease-out 150ms',
+                      }}
                     />
                   </div>
                 )}
