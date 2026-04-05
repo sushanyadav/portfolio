@@ -217,17 +217,7 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
                     className="relative grid shrink-0 place-items-center overflow-hidden"
                     style={{ width: THUMB_W, height: THUMB_H }}
                   >
-                    {/* Thumbnail image */}
-                    <div
-                      className={cn(
-                        'relative [grid-area:1/1] overflow-hidden transition-opacity duration-200 ease-out',
-                        isItemActive && 'opacity-0',
-                      )}
-                      style={{ width: THUMB_W, height: THUMB_H }}
-                    >
-                      <MediaEl craft={c} loading="eager" />
-                    </div>
-                    {/* Dot → arrow morph via clip-path */}
+                    {/* Dot → arrow morph via clip-path (behind image) */}
                     <span
                       className={cn(
                         'pointer-events-none [grid-area:1/1] bg-accent',
@@ -239,12 +229,21 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
                         width: 14,
                         height: 14,
                         marginTop: 1,
-                        opacity: isItemActive ? 1 : 0,
                         transition: isItemActive
-                          ? 'opacity 100ms ease-out, clip-path 200ms ease-out 120ms'
-                          : 'clip-path 150ms ease-out, opacity 100ms ease-out 150ms',
+                          ? 'clip-path 200ms ease-out 120ms'
+                          : 'clip-path 150ms ease-out',
                       }}
                     />
+                    {/* Thumbnail image (on top) */}
+                    <div
+                      className={cn(
+                        'relative [grid-area:1/1] overflow-hidden transition-opacity duration-200 ease-out',
+                        isItemActive && 'opacity-0',
+                      )}
+                      style={{ width: THUMB_W, height: THUMB_H }}
+                    >
+                      <MediaEl craft={c} loading="eager" />
+                    </div>
                   </div>
                 )}
                 <div className="flex flex-col gap-0.5">
