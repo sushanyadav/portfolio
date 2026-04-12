@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+import { BlurVideo } from '@/common/components/blur-video/blur-video';
 import { generatePageMetadata, SITE_NAME } from '@/common/tools/seo';
 
 import {
@@ -91,9 +92,24 @@ export default async function CraftPage({ params }: PageProps) {
         </div>
       )}
 
-      <div className="prose-article">
-        <Content />
-      </div>
+      {!metadata.coverImage && metadata.media?.[0]?.type === 'video' && (
+        <BlurVideo
+          aspectRatio={metadata.media[0].aspectRatio}
+          className="mb-10 rounded-none border border-border"
+          mp4Src={metadata.media.find((m) => m.src.endsWith('.mp4'))?.src}
+          src={metadata.media[0].src}
+        />
+      )}
+
+      {metadata.wip ? (
+        <div className="flex h-32 items-center justify-center">
+          <p className="text-sm text-text-tertiary">work in progress.</p>
+        </div>
+      ) : (
+        <div className="prose-article">
+          <Content />
+        </div>
+      )}
     </article>
   );
 }

@@ -1,17 +1,24 @@
 export const metadata = {
-  title: 'Shader Sketches',
-  description: 'Collection of GLSL fragment shader experiments.',
-  publishedAt: '2026-01-10',
-  tags: ['creative', 'glsl'],
+  title: "Sketch Wipe",
+  description: "pencil-sketch video transition.",
+  wip: true,
+  publishedAt: "2026-01-10",
+  tags: ["creative", "glsl", "threejs"],
   media: [
-    { type: 'image', src: '/images/crafts/gradient-art.webp', alt: 'Shader sketch — noise fields' },
+    {
+      type: "video",
+      src: "https://res.cloudinary.com/dum8sg7sy/video/upload/q_auto:best/crafts/sketch-wipe.webm",
+      alt: "Sketch wipe transition",
+      aspectRatio: "16 / 10",
+    },
+    {
+      type: "video",
+      src: "https://res.cloudinary.com/dum8sg7sy/video/upload/q_auto:best/crafts/sketch-wipe-mp4.mp4",
+      alt: "Sketch wipe transition",
+    },
   ],
 };
 
-Daily shader sketches exploring noise, SDF, and generative patterns. Each sketch is a single fragment shader, written in GLSL and rendered in a canvas element.
+A click-triggered video transition that briefly renders the frame as a pencil sketch on white paper before revealing the next clip. Built with React Three Fiber and custom GLSL.
 
-## Themes
-
-- **Noise fields** — layered simplex and Perlin noise
-- **SDF compositions** — smooth boolean operations on signed distance fields
-- **Color studies** — palette generation through mathematical color spaces
+Edge detection turns the video into line art, noise displaces the wipe edge, and a quick chromatic aberration flash punctuates the end. Claude helped me simplify the shader math.

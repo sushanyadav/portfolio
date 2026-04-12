@@ -41,7 +41,7 @@ export async function generateMetadata({
 export default async function ThoughtPage({ params }: PageProps) {
   const { slug } = await params;
 
-  const thought = await getThoughtBySlug(slug).catch(() => null);
+  const thought = await getThoughtBySlug(slug);
 
   if (!thought) {
     notFound();

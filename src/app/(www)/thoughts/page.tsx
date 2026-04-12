@@ -30,25 +30,29 @@ export default async function ThoughtsPage() {
         </p>
       </header>
 
-      <div className="flex flex-col">
-        {thoughts.map((thought) => (
-          <Link
-            key={thought.slug}
-            className="group -mx-3 flex items-baseline justify-between gap-4 border-b border-border px-3 py-3 transition-colors duration-150 ease-out last:border-b-0 phover:hover:bg-surface-hover"
-            href={`/thoughts/${thought.slug}`}
-          >
-            <span className="text-sm text-text-secondary transition-colors duration-150 ease-out group-hover:text-text-primary">
-              {thought.title}
-            </span>
-            <span className="shrink-0 text-xs tabular-nums text-text-tertiary">
-              {new Date(thought.publishedAt).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-              })}
-            </span>
-          </Link>
-        ))}
-      </div>
+      {thoughts.length === 0 ? (
+        <p className="text-sm text-text-tertiary">coming soon.</p>
+      ) : (
+        <div className="flex flex-col">
+          {thoughts.map((thought) => (
+            <Link
+              key={thought.slug}
+              className="group -mx-3 flex items-baseline justify-between gap-4 border-b border-border px-3 py-3 transition-colors duration-150 ease-out last:border-b-0 phover:hover:bg-surface-hover"
+              href={`/thoughts/${thought.slug}`}
+            >
+              <span className="text-sm text-text-secondary transition-colors duration-150 ease-out group-hover:text-text-primary">
+                {thought.title}
+              </span>
+              <span className="shrink-0 text-xs tabular-nums text-text-tertiary">
+                {new Date(thought.publishedAt).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                })}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

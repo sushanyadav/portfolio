@@ -7,6 +7,7 @@ type MediaItem = {
   alt?: string;
   width?: number;
   height?: number;
+  aspectRatio?: string;
 };
 
 export type CraftMeta = {
@@ -18,6 +19,7 @@ export type CraftMeta = {
   media?: MediaItem[];
   coverImage?: string;
   url?: string;
+  wip?: boolean;
 };
 
 const CRAFTS_DIR = path.join(

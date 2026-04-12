@@ -6,10 +6,12 @@ import { cn } from '@/common/functions/cn';
 
 type BlurVideoProps = {
   src: string;
+  mp4Src?: string;
   className?: string;
+  aspectRatio?: string;
 };
 
-export function BlurVideo({ src, className }: BlurVideoProps) {
+export function BlurVideo({ src, mp4Src, className, aspectRatio }: BlurVideoProps) {
   const [ready, setReady] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -40,7 +42,7 @@ export function BlurVideo({ src, className }: BlurVideoProps) {
   }, []);
 
   return (
-    <div className={cn('relative overflow-hidden bg-bg-secondary', className)}>
+    <div className={cn('relative overflow-hidden bg-bg-secondary', className)} style={aspectRatio ? { aspectRatio } : undefined}>
       <video
         ref={videoRef}
         autoPlay
@@ -52,9 +54,9 @@ export function BlurVideo({ src, className }: BlurVideoProps) {
         muted
         playsInline
         preload="auto"
-        webkit-playsinline=""
       >
-        <source src={src} />
+        <source src={src} type="video/webm" />
+        {mp4Src && <source src={mp4Src} type="video/mp4" />}
       </video>
     </div>
   );
