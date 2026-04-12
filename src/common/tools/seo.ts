@@ -5,7 +5,7 @@ export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL ||
   (process.env.VERCEL_PROJECT_PRODUCTION_URL
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-    : 'https://example.com');
+    : 'https://sushan.xyz');
 
 export const SITE_NAME = 'sushan.';
 export const SITE_DESCRIPTION = 'design engineer';
