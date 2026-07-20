@@ -1,0 +1,149 @@
+export const metadata = {
+  title: "Yuzu",
+  description: "a shy mascot that hides on click and peeks back in.",
+  publishedAt: "2026-02-04",
+  tags: ["interaction", "gsap", "animation"],
+  url: "https://capy.ai",
+  media: [
+    {
+      type: "video",
+      src: "/images/crafts/yuzu.webm",
+      alt: "Yuzu hiding on click and peeking back in",
+      aspectRatio: "1 / 1",
+      width: 152,
+    },
+    {
+      type: "video",
+      src: "/images/crafts/yuzu.mp4",
+      alt: "Yuzu hiding on click and peeking back in",
+    },
+  ],
+};
+
+import { BlurVideo } from "@/common/components/blur-video/blur-video";
+
+export function Clip({ name, caption }) {
+  return (
+    <figure className="m-0">
+      <div style={{ width: 180 }}>
+        <BlurVideo
+          aspectRatio="1 / 1"
+          className="border border-border"
+          mp4Src={`/images/crafts/${name}.mp4`}
+          src={`/images/crafts/${name}.webm`}
+        />
+      </div>
+      <figcaption className="mt-2 text-xs text-text-tertiary">
+        {caption}
+      </figcaption>
+    </figure>
+  );
+}
+
+export function ClipRow({ children }) {
+  return <div className="not-prose my-8 flex flex-wrap gap-6">{children}</div>;
+}
+
+Yuzu is the little mascot on [capy.ai](https://capy.ai). It lives on the right edge of the screen and acts like a small shy animal. It peeks in when the page loads, blinks, leans toward your cursor, squishes when you press it, and bolts when you click.
+
+### the slide in
+
+Think about peeking around a corner to check if someone's there. You lean out quick, hold while you scan the room, then step out once it feels safe. Never one speed. Yuzu enters the same way.
+
+Most animations on the web move in one smooth glide: start, slow down, stop. That reads as an object, not a character. So yuzu runs on a custom speed curve:
+
+```js
+CustomEase.create("peekIn", "0.165, 0.84, 0.82, 0.78");
+
+gsap.fromTo(
+  el,
+  { xPercent: 120 },
+  { xPercent: 0, duration: 1.4, ease: "peekIn" },
+);
+```
+
+The tail of the curve is bent so the speed never reaches zero. Yuzu inches out for most of the 1.4 seconds, then pushes the last bit and arrives still moving.
+
+That leftover motion needs somewhere to go. Cartoons solved this too: soft things don't just stop, they squash and stretch. So the arrival spills into a wobble:
+
+```js
+keyframes: [
+  { scaleX: 1.15, duration: 0.12 },
+  { scaleX: 0.95, duration: 0.1 },
+  { scaleX: 1, duration: 0.15, ease: "easeOutQuad" },
+];
+```
+
+Stretch past normal, pull back, settle. That wobble is the "hey, i'm here."
+
+<ClipRow>
+  <Clip name="yuzu-entry" caption="peekIn: creeps out, then commits" />
+  <Clip name="yuzu-entry-wrong" caption="a normal glide: no hesitation" />
+</ClipRow>
+
+### the blink
+
+A toy blinks on a timer. A pet blinks whenever it feels like it. The difference is randomness, so the wait between blinks is a dice roll:
+
+```js
+const scheduleBlink = () => {
+  gsap.delayedCall(gsap.utils.random(3, 7), blink);
+};
+```
+
+The blink itself is just the eyes squeezed to a line and back, 0.08 seconds each way. Fast enough that you feel it more than see it.
+
+Hover over yuzu and it blinks once and leans toward you a little, like a pet noticing your hand before you pet it:
+
+```js
+gsap.to(el, { xPercent: 12, duration: 0.3, ease: "easeOutQuart" });
+```
+
+<ClipRow>
+  <Clip name="yuzu-hover" caption="blink and lean" />
+</ClipRow>
+
+### the squish
+
+Press a gummy bear against a table. It doesn't shrink. It flattens where you push and bulges where you don't. To get that on screen, one decision matters before any animation: which part of yuzu stays pinned when it changes shape.
+
+```js
+gsap.set(el, { transformOrigin: "center right" });
+```
+
+Yuzu's right edge is glued to the screen, so that edge stays pinned. Now pressing it squishes it against its own wall:
+
+```js
+gsap.to(el, { scaleX: 0.87, scaleY: 1.08, duration: 0.15 });
+```
+
+Narrower and a little taller. Squeezed, not shrunk. The same pinned edge is why the entry wobble stretches out of the wall instead of ballooning in place.
+
+<ClipRow>
+  <Clip name="yuzu-squish" caption="pinned to the wall: squishes against it (slowed down)" />
+  <Clip name="yuzu-squish-wrong" caption="pinned at the center: shrinks in place (slowed down)" />
+</ClipRow>
+
+### the hide and come back
+
+Startle a cat and watch the timing. The escape is instant. The hiding takes as long as it takes. The return is slow and careful. Fear is fast, curiosity is slow.
+
+That's the whole design of the click:
+
+```js
+returnTl
+  .to(el, { scaleX: 1, scaleY: 1, xPercent: 120, duration: 0.3 }) // bolt, fast
+  .to(el, { xPercent: 120, duration: 0.8 }) // hide, do nothing
+  .to(el, { xPercent: 0, duration: 1.4, ease: "peekIn" }); // creep back out
+```
+
+0.3 seconds to bolt. Then 0.8 seconds of nothing, which is yuzu deciding whether you can be trusted. Then the same slow peek-in from the start, wobble included.
+
+The pause is the part people feel. Animating nothing for 0.8 seconds is still animating.
+
+<ClipRow>
+  <Clip name="yuzu-return" caption="bolts, hides, creeps back" />
+  <Clip name="yuzu-return-wrong" caption="no pause, straight back" />
+</ClipRow>
+
+No springs, no physics, nothing fancy. A few speed curves, a few timed steps, and one rule from every cartoon ever made: leave fast, come back slow.

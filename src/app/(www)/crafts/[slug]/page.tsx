@@ -93,12 +93,21 @@ export default async function CraftPage({ params }: PageProps) {
       )}
 
       {!metadata.coverImage && metadata.media?.[0]?.type === 'video' && (
-        <BlurVideo
-          aspectRatio={metadata.media[0].aspectRatio}
-          className="mb-10 rounded-none border border-border"
-          mp4Src={metadata.media.find((m) => m.src.endsWith('.mp4'))?.src}
-          src={metadata.media[0].src}
-        />
+        <div
+          className="mb-10"
+          style={
+            metadata.media[0].width
+              ? { maxWidth: metadata.media[0].width }
+              : undefined
+          }
+        >
+          <BlurVideo
+            aspectRatio={metadata.media[0].aspectRatio}
+            className="rounded-none border border-border"
+            mp4Src={metadata.media.find((m) => m.src.endsWith('.mp4'))?.src}
+            src={metadata.media[0].src}
+          />
+        </div>
       )}
 
       {metadata.wip ? (
