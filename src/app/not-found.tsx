@@ -1,9 +1,10 @@
-const Error404 = () => {
-  return (
-    <section className="grid h-full place-content-center">
-      Page not found
-    </section>
-  );
-};
+import { CoreLayout } from '@/common/components/core-layout/core-layout';
+import { NotFoundContent } from '@/modules/not-found/not-found-content';
 
-export default Error404;
+export default function NotFound() {
+  return (
+    <CoreLayout>
+      <NotFoundContent />
+    </CoreLayout>
+  );
+}
