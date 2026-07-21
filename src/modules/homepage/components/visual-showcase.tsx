@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
+import { BlurVideo } from '@/common/components/blur-video/blur-video';
 import {
   CraftTile,
   mediaRatio,
@@ -18,13 +19,13 @@ type VisualShowcaseProps = {
 
 const spring = { type: 'spring', stiffness: 300, damping: 30 } as const;
 
-// cap the spotlight by viewport height and an absolute ceiling (~56rem tall),
-// honoring the media's own ratio
+// fill the screen: height drives on wide viewports, the overlay padding
+// caps width on tall ones; media keeps its true ratio
 function spotlightMaxWidth(craft: ShowcaseCraft): string {
   const raw = craft.media[0]?.aspectRatio;
   const [w, h] = raw ? raw.split('/').map((n) => parseFloat(n)) : [16, 10];
   const ratio = w && h ? w / h : 1.6;
-  return `min(calc((100vh - 8rem) * ${ratio}), ${Math.round(ratio * 56)}rem)`;
+  return `calc((100vh - 7rem) * ${ratio})`;
 }
 
 function TileCaption({
@@ -105,7 +106,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
             >
               <motion.button
                 aria-label={`view ${craft.title}`}
-                className="focus-ring block w-full cursor-zoom-in text-left"
+                className="focus-ring block w-full cursor-zoom-in bg-bg text-left"
                 layoutId={`visual-${craft.slug}`}
                 transition={spring}
                 type="button"
@@ -150,12 +151,17 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
               </svg>
             </button>
             <motion.div
-              className="w-full"
+              className="w-full cursor-zoom-out bg-bg"
               layoutId={`visual-${active.slug}`}
               style={{ maxWidth: spotlightMaxWidth(active) }}
               transition={spring}
             >
-              <CraftTile craft={active} />
+              <BlurVideo
+                aspectRatio={active.media[0]?.aspectRatio ?? '16 / 10'}
+                className="w-full border border-border"
+                mp4Src={active.media.find((m) => m.src.endsWith('.mp4'))?.src}
+                src={active.media[0]?.src ?? ''}
+              />
               <p className="mt-2 text-xs text-text-tertiary">{active.title}</p>
             </motion.div>
           </motion.div>

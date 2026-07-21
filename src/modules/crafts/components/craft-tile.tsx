@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 import { BlurImage } from '@/common/components/blur-image/blur-image';
 import { BlurVideo } from '@/common/components/blur-video/blur-video';
 
@@ -11,11 +13,14 @@ export type TileCraft = {
     alt?: string;
     width?: number;
     aspectRatio?: string;
+    displayRatio?: string;
+    objectPosition?: string;
   }>;
 };
 
 export function mediaRatio(craft: TileCraft): number {
-  const raw = craft.media[0]?.aspectRatio;
+  const first = craft.media[0];
+  const raw = first?.displayRatio ?? first?.aspectRatio;
   const [w, h] = raw ? raw.split('/').map((n) => parseFloat(n)) : [16, 10];
   return w && h ? w / h : 1.6;
 }
@@ -38,14 +43,18 @@ export function CraftTile({ craft }: { craft: TileCraft }) {
     );
   }
 
-  // tiles cap at ~416px tall; extreme ratios center-crop in the preview
-  // while the spotlight shows the full frame
+  // tiles cap at ~416px tall; displayRatio and extreme ratios crop in the
+  // preview (anchored via objectPosition), the spotlight shows the full frame
   return (
-    <BlurVideo
-      aspectRatio={first.aspectRatio ?? '16 / 10'}
-      className="max-h-104 w-full border border-border [&>video]:size-full [&>video]:object-cover"
-      mp4Src={mp4}
-      src={first.src}
-    />
+    <div
+      style={{ '--pos': first.objectPosition ?? 'center' } as CSSProperties}
+    >
+      <BlurVideo
+        aspectRatio={first.displayRatio ?? first.aspectRatio ?? '16 / 10'}
+        className="max-h-104 w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-(--pos)"
+        mp4Src={mp4}
+        src={first.src}
+      />
+    </div>
   );
 }

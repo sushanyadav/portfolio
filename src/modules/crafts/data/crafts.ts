@@ -8,6 +8,10 @@ type MediaItem = {
   width?: number;
   height?: number;
   aspectRatio?: string;
+  /** tile-only ratio override; media cover-crops inside it */
+  displayRatio?: string;
+  /** crop anchor when displayRatio crops, e.g. "right" */
+  objectPosition?: string;
 };
 
 export type CraftMeta = {
