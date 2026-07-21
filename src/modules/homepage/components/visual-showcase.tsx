@@ -47,7 +47,7 @@ function TileCaption({
           className="bg-accent size-2.5 shrink-0 transition-[clip-path] duration-200 ease-out [clip-path:polygon(0%_100%,0%_0%,35%_0%,35%_0%,100%_0%,100%_65%,100%_100%,90%_100%,10%_100%)] group-hover:[clip-path:polygon(0%_90%,80%_10%,35%_10%,35%_0%,100%_0%,100%_65%,90%_65%,90%_10%,10%_100%)]"
         />
       )}
-      <span className="text-text-tertiary group-hover:text-text-secondary text-xs transition-colors duration-150 ease-out">
+      <span className="text-text-tertiary group-hover:text-text-secondary text-xs lowercase transition-colors duration-150 ease-out">
         {craft.title}
       </span>
       <span className="text-text-tertiary ml-auto text-xs tabular-nums">
@@ -188,7 +188,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
                 mp4Src={active.media.find((m) => m.src.endsWith('.mp4'))?.src}
                 src={active.media[0]?.src ?? ''}
               />
-              <p className="text-text-tertiary mt-2 text-xs">{active.title}</p>
+              <p className="text-text-tertiary mt-2 text-xs lowercase">{active.title}</p>
             </motion.div>
           </motion.div>
         )}

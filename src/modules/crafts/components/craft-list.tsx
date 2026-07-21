@@ -254,15 +254,15 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
                   </div>
                 )}
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-sm text-text-secondary transition-colors duration-150 ease-out group-hover:text-text-primary">
+                  <span className="text-sm lowercase text-text-secondary transition-colors duration-150 ease-out group-hover:text-text-primary">
                     {c.title}
                   </span>
-                  <span className="text-xs text-text-tertiary">
+                  <span className="text-xs lowercase text-text-tertiary">
                     {c.description}
                   </span>
                 </div>
               </div>
-              <span className="shrink-0 text-xs tabular-nums text-text-tertiary">
+              <span className="shrink-0 text-xs lowercase tabular-nums text-text-tertiary">
                 {new Date(c.publishedAt).getFullYear()}
               </span>
             </Link>

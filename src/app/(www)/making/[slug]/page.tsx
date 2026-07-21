@@ -30,7 +30,7 @@ export async function generateMetadata({
   try {
     const { metadata } = await getCraftBySlug(slug);
     return generatePageMetadata({
-      title: `${metadata.title} - ${SITE_NAME}`,
+      title: `${metadata.title.toLowerCase()} - ${SITE_NAME}`,
       description: metadata.description,
       path: `making/${slug}`,
       type: 'article',
@@ -62,7 +62,7 @@ export default async function CraftPage({ params }: PageProps) {
         ← making
       </Link>
 
-      <header className="mt-8 mb-10">
+      <header className="mt-8 mb-10 lowercase">
         <time
           className="text-xs text-text-tertiary"
           dateTime={metadata.publishedAt}
