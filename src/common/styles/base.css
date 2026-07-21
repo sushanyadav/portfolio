@@ -5,6 +5,10 @@
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* reserve the gutter so pages with/without scrollbars don't shift */
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-border-hover) transparent;
   }
 
   *,
@@ -31,7 +35,8 @@
   }
 
   a,
-  button {
+  button,
+  pre {
     @apply focus-ring;
   }
 }
