@@ -55,6 +55,11 @@
     color: var(--color-text-primary);
   }
 
+  video {
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
   button:not(:disabled),
   [role='button']:not(:disabled) {
     cursor: pointer;

@@ -113,6 +113,10 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
                 aria-label={`view ${craft.title}`}
                 className="focus-ring block w-full cursor-zoom-in bg-bg text-left"
                 layoutId={`visual-${craft.slug}`}
+                style={{
+                  visibility:
+                    active?.slug === craft.slug ? 'hidden' : undefined,
+                }}
                 transition={morph}
                 type="button"
                 onClick={() => setActive(craft)}
@@ -128,14 +132,18 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
       <AnimatePresence>
         {active && (
           <motion.div
-            animate={{ opacity: 1 }}
             aria-modal="true"
-            className="fixed inset-0 z-50 flex cursor-zoom-out items-center justify-center bg-bg/80 p-6 backdrop-blur-sm"
-            exit={{ opacity: 0 }}
-            initial={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex cursor-zoom-out items-center justify-center p-6"
             role="dialog"
             onClick={() => setActive(null)}
           >
+            <motion.div
+              animate={{ opacity: 1 }}
+              aria-hidden
+              className="absolute inset-0 bg-bg/80 backdrop-blur-sm"
+              exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }}
+            />
             <button
               aria-label="close"
               className="hitbox fixed top-6 right-6 flex size-8 items-center justify-center text-text-tertiary transition-colors duration-150 ease-out hover:text-text-primary"
@@ -156,7 +164,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
               </svg>
             </button>
             <motion.div
-              className="w-full cursor-zoom-out bg-bg"
+              className="relative w-full cursor-zoom-out bg-bg"
               layoutId={`visual-${active.slug}`}
               style={{ maxWidth: spotlightMaxWidth(active) }}
               transition={morph}
