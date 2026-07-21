@@ -13,7 +13,6 @@ export const metadata = {
       aspectRatio: "1 / 1",
       displayRatio: "3 / 4",
       objectPosition: "right",
-      width: 320,
     },
     {
       type: "video",
@@ -27,17 +26,19 @@ import { BlurVideo } from "@/common/components/blur-video/blur-video";
 
 export const CDN = "https://res.cloudinary.com/dum8sg7sy/video/upload/q_auto:best/crafts";
 
-export function Clip({ name, caption }) {
+export function Clip({ name, caption, wide }) {
   return (
-    <figure className="m-0">
-      <div style={{ width: 180 }}>
-        <BlurVideo
-          aspectRatio="1 / 1"
-          className="border border-border"
-          mp4Src={`${CDN}/${name}-mp4.mp4`}
-          src={`${CDN}/${name}.webm`}
-        />
-      </div>
+    <figure className="m-0 min-w-0 flex-1">
+      <BlurVideo
+        aspectRatio={wide ? undefined : "1 / 1"}
+        className={
+          wide
+            ? "h-88 w-full border border-border [&>video]:size-full [&>video]:object-cover"
+            : "border border-border"
+        }
+        mp4Src={`${CDN}/${name}-mp4.mp4`}
+        src={`${CDN}/${name}.webm`}
+      />
       <figcaption className="mt-2 text-xs text-text-tertiary">
         {caption}
       </figcaption>
@@ -46,7 +47,11 @@ export function Clip({ name, caption }) {
 }
 
 export function ClipRow({ children }) {
-  return <div className="not-prose my-8 flex flex-wrap gap-6">{children}</div>;
+  return (
+    <div className="not-prose my-8 flex flex-col gap-4 sm:flex-row">
+      {children}
+    </div>
+  );
 }
 
 Yuzu is the little mascot on [capy.ai](https://capy.ai). It lives on the right edge of the screen and acts like a small shy animal. It peeks in when the page loads, blinks, leans toward your cursor, squishes when you press it, and bolts when you click.
@@ -105,7 +110,7 @@ gsap.to(el, { xPercent: 12, duration: 0.3, ease: "easeOutQuart" });
 ```
 
 <ClipRow>
-  <Clip name="yuzu-hover" caption="blink and lean" />
+  <Clip name="yuzu-hover" caption="blink and lean" wide />
 </ClipRow>
 
 There's a small detail that's easy to miss. Yuzu's face is sideways, so its eyes close left to right, not top to bottom. Squeeze them the normal way and it stops reading as a blink:

@@ -105,7 +105,7 @@ export default async function CraftPage({ params }: PageProps) {
         >
           <BlurVideo
             aspectRatio={metadata.media[0].aspectRatio}
-            className="rounded-none border border-border"
+            className="max-h-112 w-full rounded-none border border-border [&>video]:size-full [&>video]:object-cover"
             mp4Src={metadata.media.find((m) => m.src.endsWith('.mp4'))?.src}
             src={metadata.media[0].src}
           />
