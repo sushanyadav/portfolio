@@ -48,9 +48,9 @@ Yuzu is the little mascot on [capy.ai](https://capy.ai). It lives on the right e
 
 ### the slide in
 
-Think about peeking around a corner to check if someone's there. You lean out quick, hold while you scan the room, then step out once it feels safe. Never one speed. Yuzu enters the same way.
+Think about peeking around a corner to check if someone's there. You edge out a little, pause while you scan the room, then step out once it feels safe. Never one speed. Yuzu enters the same way.
 
-Most animations on the web move in one smooth glide: start, slow down, stop. That reads as an object, not a character. So yuzu runs on a custom speed curve:
+A smooth glide works for most things on a page. It just can't act shy. So yuzu got its own speed curve:
 
 ```js
 CustomEase.create("peekIn", "0.165, 0.84, 0.82, 0.78");
@@ -64,7 +64,7 @@ gsap.fromTo(
 
 The tail of the curve is bent so the speed never reaches zero. Yuzu inches out for most of the 1.4 seconds, then pushes the last bit and arrives still moving.
 
-That leftover motion needs somewhere to go. Cartoons solved this too: soft things don't just stop, they squash and stretch. So the arrival spills into a wobble:
+That leftover motion needs somewhere to go. Soft things don't just stop, they squash and stretch. So the arrival spills into a wobble:
 
 ```js
 keyframes: [
@@ -103,6 +103,18 @@ gsap.to(el, { xPercent: 12, duration: 0.3, ease: "easeOutQuart" });
   <Clip name="yuzu-hover" caption="blink and lean" />
 </ClipRow>
 
+There's a small detail that's easy to miss. Yuzu's face is sideways, so its eyes close left to right, not top to bottom. Squeeze them the normal way and it stops reading as a blink:
+
+```js
+gsap.to(eyes, { scaleX: 0.1, duration: 0.08, yoyo: true, repeat: 1 });
+// scaleX, not scaleY: the face is sideways
+```
+
+<ClipRow>
+  <Clip name="yuzu-blink" caption="scaleX, with the face (4x slower)" />
+  <Clip name="yuzu-blink-wrong" caption="scaleY, against it (4x slower)" />
+</ClipRow>
+
 ### the squish
 
 Press a gummy bear against a table. It doesn't shrink. It flattens where you push and bulges where you don't. To get that on screen, one decision matters before any animation: which part of yuzu stays pinned when it changes shape.
@@ -117,11 +129,19 @@ Yuzu's right edge is glued to the screen, so that edge stays pinned. Now pressin
 gsap.to(el, { scaleX: 0.87, scaleY: 1.08, duration: 0.15 });
 ```
 
-Narrower and a little taller. Squeezed, not shrunk. The same pinned edge is why the entry wobble stretches out of the wall instead of ballooning in place.
+Press yuzu and it flattens against the edge. The width it loses bulges into height, just like the gummy bear. That slight height change, done with scale, is what makes yuzu look squeezed.
+
+Both clips below run the exact same press. In the first clip, yuzu is pinned to the wall, so it squishes against it. In the second, it's pinned at its own center, so it shrinks from the center, which looks unnatural.
 
 <ClipRow>
-  <Clip name="yuzu-squish" caption="pinned to the wall: squishes against it (slowed down)" />
-  <Clip name="yuzu-squish-wrong" caption="pinned at the center: shrinks in place (slowed down)" />
+  <Clip
+    name="yuzu-squish"
+    caption="pinned to the wall: squishes against it (2x slower)"
+  />
+  <Clip
+    name="yuzu-squish-wrong"
+    caption="pinned at the center: shrinks in place (2x slower)"
+  />
 </ClipRow>
 
 ### the hide and come back
@@ -146,4 +166,4 @@ The pause is the part people feel. Animating nothing for 0.8 seconds is still an
   <Clip name="yuzu-return-wrong" caption="no pause, straight back" />
 </ClipRow>
 
-No springs, no physics, nothing fancy. A few speed curves, a few timed steps, and one rule from every cartoon ever made: leave fast, come back slow.
+Every detail here is almost too small to notice on its own. Together, they're the whole character. That's the thing about small details: none of them matter until all of them do.
