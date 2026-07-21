@@ -19,6 +19,10 @@ type VisualShowcaseProps = {
 
 const spring = { type: 'spring', stiffness: 300, damping: 30 } as const;
 
+// shared-layout morphs must not crossfade: the see-through mid-flight looks
+// broken. geometry springs, opacity snaps.
+const morph = { ...spring, opacity: { duration: 0 } } as const;
+
 // fill the screen: height drives on wide viewports, the overlay padding
 // caps width on tall ones; media keeps its true ratio
 function spotlightMaxWidth(craft: ShowcaseCraft): string {
@@ -109,7 +113,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
                 aria-label={`view ${craft.title}`}
                 className="focus-ring block w-full cursor-zoom-in bg-bg text-left"
                 layoutId={`visual-${craft.slug}`}
-                transition={spring}
+                transition={morph}
                 type="button"
                 onClick={() => setActive(craft)}
               >
@@ -155,7 +159,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
               className="w-full cursor-zoom-out bg-bg"
               layoutId={`visual-${active.slug}`}
               style={{ maxWidth: spotlightMaxWidth(active) }}
-              transition={spring}
+              transition={morph}
             >
               <BlurVideo
                 aspectRatio={active.media[0]?.aspectRatio ?? '16 / 10'}
