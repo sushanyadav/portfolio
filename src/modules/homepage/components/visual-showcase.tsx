@@ -144,9 +144,12 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
               exit={{ opacity: 0 }}
               initial={{ opacity: 0 }}
             />
-            <button
+            <motion.button
+              animate={{ opacity: 1 }}
               aria-label="close"
               className="hitbox text-text-tertiary hover:text-text-primary fixed top-6 right-6 flex size-8 items-center justify-center transition-colors duration-150 ease-out"
+              exit={{ opacity: 0, transition: { duration: 0.08 } }}
+              initial={{ opacity: 0 }}
               type="button"
               onClick={() => setActive(null)}
             >
@@ -162,7 +165,17 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
                 <line x1="5" x2="19" y1="5" y2="19" />
                 <line x1="19" x2="5" y1="5" y2="19" />
               </svg>
-            </button>
+            </motion.button>
+            <motion.button
+              animate={{ opacity: 1 }}
+              className="hitbox text-text-tertiary hover:text-text-primary fixed right-6 bottom-6 text-xs tracking-widest uppercase transition-colors duration-150 ease-out"
+              exit={{ opacity: 0, transition: { duration: 0.08 } }}
+              initial={{ opacity: 0 }}
+              type="button"
+              onClick={() => setActive(null)}
+            >
+              close
+            </motion.button>
             <motion.div
               className="bg-bg relative w-full cursor-zoom-out"
               layoutId={`visual-${active.slug}`}
