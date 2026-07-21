@@ -29,7 +29,7 @@ function spotlightMaxWidth(craft: ShowcaseCraft): string {
   const raw = craft.media[0]?.aspectRatio;
   const [w, h] = raw ? raw.split('/').map((n) => parseFloat(n)) : [16, 10];
   const ratio = w && h ? w / h : 1.6;
-  return `calc((100vh - 7rem) * ${ratio})`;
+  return `calc((100dvh - 7rem) * ${ratio})`;
 }
 
 function TileCaption({
@@ -44,13 +44,13 @@ function TileCaption({
       {readable && (
         <span
           aria-hidden
-          className="size-2.5 shrink-0 bg-accent transition-[clip-path] duration-200 ease-out [clip-path:polygon(0%_100%,0%_0%,35%_0%,35%_0%,100%_0%,100%_65%,100%_100%,90%_100%,10%_100%)] group-hover:[clip-path:polygon(0%_90%,80%_10%,35%_10%,35%_0%,100%_0%,100%_65%,90%_65%,90%_10%,10%_100%)]"
+          className="bg-accent size-2.5 shrink-0 transition-[clip-path] duration-200 ease-out [clip-path:polygon(0%_100%,0%_0%,35%_0%,35%_0%,100%_0%,100%_65%,100%_100%,90%_100%,10%_100%)] group-hover:[clip-path:polygon(0%_90%,80%_10%,35%_10%,35%_0%,100%_0%,100%_65%,90%_65%,90%_10%,10%_100%)]"
         />
       )}
-      <span className="text-xs text-text-tertiary transition-colors duration-150 ease-out group-hover:text-text-secondary">
+      <span className="text-text-tertiary group-hover:text-text-secondary text-xs transition-colors duration-150 ease-out">
         {craft.title}
       </span>
-      <span className="ml-auto text-xs tabular-nums text-text-tertiary">
+      <span className="text-text-tertiary ml-auto text-xs tabular-nums">
         {craft.year}
       </span>
     </div>
@@ -111,7 +111,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
             >
               <motion.button
                 aria-label={`view ${craft.title}`}
-                className="focus-ring block w-full cursor-zoom-in bg-bg text-left"
+                className="focus-ring bg-bg block w-full cursor-zoom-in text-left"
                 layoutId={`visual-${craft.slug}`}
                 style={{
                   visibility:
@@ -140,13 +140,13 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
             <motion.div
               animate={{ opacity: 1 }}
               aria-hidden
-              className="absolute inset-0 bg-bg/80 backdrop-blur-sm"
+              className="bg-bg/80 absolute inset-0 backdrop-blur-sm"
               exit={{ opacity: 0 }}
               initial={{ opacity: 0 }}
             />
             <button
               aria-label="close"
-              className="hitbox fixed top-6 right-6 flex size-8 items-center justify-center text-text-tertiary transition-colors duration-150 ease-out hover:text-text-primary"
+              className="hitbox text-text-tertiary hover:text-text-primary fixed top-6 right-6 flex size-8 items-center justify-center transition-colors duration-150 ease-out"
               type="button"
               onClick={() => setActive(null)}
             >
@@ -164,18 +164,18 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
               </svg>
             </button>
             <motion.div
-              className="relative w-full cursor-zoom-out bg-bg"
+              className="bg-bg relative w-full cursor-zoom-out"
               layoutId={`visual-${active.slug}`}
               style={{ maxWidth: spotlightMaxWidth(active) }}
               transition={morph}
             >
               <BlurVideo
                 aspectRatio={active.media[0]?.aspectRatio ?? '16 / 10'}
-                className="w-full border border-border"
+                className="border-border w-full border"
                 mp4Src={active.media.find((m) => m.src.endsWith('.mp4'))?.src}
                 src={active.media[0]?.src ?? ''}
               />
-              <p className="mt-2 text-xs text-text-tertiary">{active.title}</p>
+              <p className="text-text-tertiary mt-2 text-xs">{active.title}</p>
             </motion.div>
           </motion.div>
         )}
