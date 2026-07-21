@@ -33,8 +33,8 @@ export function Clip({ name, caption, wide }) {
         aspectRatio={wide ? undefined : "1 / 1"}
         className={
           wide
-            ? "h-96 w-full border border-border [&>video]:size-full [&>video]:object-cover"
-            : "border border-border max-sm:h-76 max-sm:w-full [&>video]:max-sm:size-full [&>video]:max-sm:object-cover"
+            ? "h-96 w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-right"
+            : "border border-border max-sm:h-76 max-sm:w-full [&>video]:max-sm:size-full [&>video]:max-sm:object-cover [&>video]:max-sm:object-right"
         }
         mp4Src={`${CDN}/${name}-mp4.mp4`}
         src={`${CDN}/${name}.webm`}

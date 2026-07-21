@@ -97,15 +97,14 @@ export default async function CraftPage({ params }: PageProps) {
       {!metadata.coverImage && metadata.media?.[0]?.type === 'video' && (
         <div
           className="mb-10"
-          style={
-            metadata.media[0].width
-              ? { maxWidth: metadata.media[0].width }
-              : undefined
-          }
+          style={{
+            maxWidth: metadata.media[0].width,
+            '--hero-pos': metadata.media[0].objectPosition ?? 'center',
+          } as React.CSSProperties}
         >
           <BlurVideo
             aspectRatio={metadata.media[0].aspectRatio}
-            className="max-h-120 w-full rounded-none border border-border [&>video]:size-full [&>video]:object-cover"
+            className="max-h-120 w-full rounded-none border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-(--hero-pos)"
             mp4Src={metadata.media.find((m) => m.src.endsWith('.mp4'))?.src}
             src={metadata.media[0].src}
           />
