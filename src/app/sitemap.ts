@@ -2,12 +2,16 @@ import type { MetadataRoute } from 'next';
 
 import { SITE_URL } from '@/common/tools/seo';
 
-import { getAllCraftSlugs } from '@/modules/crafts/data/crafts';
+import { getAllCrafts } from '@/modules/crafts/data/crafts';
 import { getAllThoughtSlugs } from '@/modules/thoughts/data/posts';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const thoughtSlugs = getAllThoughtSlugs();
-  const craftSlugs = getAllCraftSlugs();
+  const crafts = await getAllCrafts();
+  // visual crafts have no pages
+  const craftSlugs = crafts
+    .filter((craft) => !craft.visual)
+    .map((craft) => craft.slug);
 
   return [
     {
@@ -29,13 +33,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     })),
     {
-      url: `${SITE_URL}/crafts`,
+      url: `${SITE_URL}/making`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
     ...craftSlugs.map((slug) => ({
-      url: `${SITE_URL}/crafts/${slug}`,
+      url: `${SITE_URL}/making/${slug}`,
       lastModified: new Date(),
       changeFrequency: 'monthly' as const,
       priority: 0.6,

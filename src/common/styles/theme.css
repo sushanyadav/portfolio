@@ -43,6 +43,7 @@
 @theme {
   --header-height: 3.5rem;
   --content-width: 43rem;
+  --site-width: 72rem;
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

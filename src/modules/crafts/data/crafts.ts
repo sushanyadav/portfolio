@@ -21,11 +21,13 @@ export type CraftMeta = {
   coverImage?: string;
   url?: string;
   wip?: boolean;
+  /** video-only piece: shown big, never gets a detail page */
+  visual?: boolean;
 };
 
 const CRAFTS_DIR = path.join(
   process.cwd(),
-  'src/app/(www)/crafts/(content)',
+  'src/app/(www)/making/(content)',
 );
 
 export function getAllCraftSlugs(): string[] {
@@ -41,7 +43,7 @@ export function getAllCraftSlugs(): string[] {
 
 export async function getCraftBySlug(slug: string) {
   const post = await import(
-    `@/app/(www)/crafts/(content)/${slug}.mdx`
+    `@/app/(www)/making/(content)/${slug}.mdx`
   );
   const metadata = post.metadata as Omit<CraftMeta, 'slug'>;
 
@@ -58,7 +60,7 @@ export async function getAllCrafts(): Promise<CraftMeta[]> {
   const crafts = await Promise.all(
     slugs.map(async (slug) => {
       const { metadata } = await import(
-        `@/app/(www)/crafts/(content)/${slug}.mdx`
+        `@/app/(www)/making/(content)/${slug}.mdx`
       );
       return { slug, ...metadata } as CraftMeta;
     }),

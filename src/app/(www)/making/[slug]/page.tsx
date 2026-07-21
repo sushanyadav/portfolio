@@ -7,7 +7,7 @@ import { BlurVideo } from '@/common/components/blur-video/blur-video';
 import { generatePageMetadata, SITE_NAME } from '@/common/tools/seo';
 
 import {
-  getAllCraftSlugs,
+  getAllCrafts,
   getCraftBySlug,
 } from '@/modules/crafts/data/crafts';
 
@@ -16,8 +16,10 @@ type PageProps = {
 };
 
 export async function generateStaticParams() {
-  const slugs = getAllCraftSlugs();
-  return slugs.map((slug) => ({ slug }));
+  const crafts = await getAllCrafts();
+  return crafts
+    .filter((craft) => !craft.visual)
+    .map((craft) => ({ slug: craft.slug }));
 }
 
 export async function generateMetadata({
@@ -30,7 +32,7 @@ export async function generateMetadata({
     return generatePageMetadata({
       title: `${metadata.title} - ${SITE_NAME}`,
       description: metadata.description,
-      path: `crafts/${slug}`,
+      path: `making/${slug}`,
       type: 'article',
       publishedTime: metadata.publishedAt,
       tags: metadata.tags,
@@ -45,7 +47,7 @@ export default async function CraftPage({ params }: PageProps) {
 
   const craft = await getCraftBySlug(slug).catch(() => null);
 
-  if (!craft) {
+  if (!craft || craft.metadata.visual) {
     notFound();
   }
 
@@ -55,9 +57,9 @@ export default async function CraftPage({ params }: PageProps) {
     <article className="container pt-16 pb-32">
       <Link
         className="text-xs text-text-tertiary transition-colors duration-150 ease-out hover:text-text-secondary"
-        href="/crafts"
+        href="/making"
       >
-        ← crafts
+        ← making
       </Link>
 
       <header className="mt-8 mb-10">

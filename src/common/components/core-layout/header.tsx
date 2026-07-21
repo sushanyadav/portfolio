@@ -9,7 +9,7 @@ import { Logo } from '@/common/components/logo/logo';
 import { ThemeToggle } from '@/common/components/theme-toggle/theme-toggle';
 
 const NAV_ITEMS = [
-  { href: '/crafts', label: 'crafts' },
+  { href: '/making', label: 'making' },
   { href: '/thoughts', label: 'thoughts' },
 ];
 
@@ -42,7 +42,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-10 h-(--header-height) shrink-0 border-b border-border bg-bg">
-      <div className="container flex h-full items-center justify-between">
+      <div className="container-wide flex h-full items-center justify-between">
         <Link
           className="flex items-center transition-opacity duration-150 ease-out hover:opacity-70 hitbox"
           href="/"

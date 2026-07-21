@@ -7,7 +7,14 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { cn } from '@/common/functions/cn';
 
-import type { CraftPreviewItem } from './recent-crafts';
+export type CraftPreviewItem = {
+  slug: string;
+  title: string;
+  description: string;
+  publishedAt: string;
+  previewSrc: string | null;
+  previewType: 'image' | 'video' | null;
+};
 
 const MAX_W = 200;
 const THUMB_W = 44;

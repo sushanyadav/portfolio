@@ -1,10 +1,7 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 
-import {
-  generatePageMetadata,
-  SITE_NAME,
-} from '@/common/tools/seo';
+import { generatePageMetadata, SITE_NAME } from '@/common/tools/seo';
 
 import { getAllThoughts } from '@/modules/thoughts/data/posts';
 
@@ -25,25 +22,25 @@ export default async function ThoughtsPage() {
     <div className="container pt-16 pb-32">
       <header className="mb-12">
         <h1 className="text-base font-medium">thoughts</h1>
-        <p className="mt-2 text-sm text-text-secondary">
+        <p className="text-text-secondary mt-2 text-sm">
           writing about design, development, and everything in between.
         </p>
       </header>
 
       {thoughts.length === 0 ? (
-        <p className="text-sm text-text-tertiary">coming soon.</p>
+        <p className="text-text-tertiary text-sm">no thoughts atm,</p>
       ) : (
         <div className="flex flex-col">
           {thoughts.map((thought) => (
             <Link
               key={thought.slug}
-              className="group -mx-3 flex items-baseline justify-between gap-4 border-b border-border px-3 py-3 transition-colors duration-150 ease-out last:border-b-0 phover:hover:bg-surface-hover"
+              className="group border-border phover:hover:bg-surface-hover -mx-3 flex items-baseline justify-between gap-4 border-b px-3 py-3 transition-colors duration-150 ease-out last:border-b-0"
               href={`/thoughts/${thought.slug}`}
             >
-              <span className="text-sm text-text-secondary transition-colors duration-150 ease-out group-hover:text-text-primary">
+              <span className="text-text-secondary group-hover:text-text-primary text-sm transition-colors duration-150 ease-out">
                 {thought.title}
               </span>
-              <span className="shrink-0 text-xs tabular-nums text-text-tertiary">
+              <span className="text-text-tertiary shrink-0 text-xs tabular-nums">
                 {new Date(thought.publishedAt).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',

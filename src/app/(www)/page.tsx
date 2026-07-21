@@ -7,8 +7,7 @@ import {
 } from '@/common/tools/seo';
 
 import { IntroSection } from '@/modules/homepage/components/intro-section';
-import { RecentCrafts } from '@/modules/homepage/components/recent-crafts';
-import { RecentThoughts } from '@/modules/homepage/components/recent-thoughts';
+import { VisualCrafts } from '@/modules/homepage/components/visual-crafts';
 
 export async function generateMetadata(): Promise<Metadata> {
   return generatePageMetadata({
@@ -21,10 +20,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function Homepage() {
   return (
-    <div className="container pt-16 pb-32">
-      <IntroSection />
-      <RecentThoughts />
-      <RecentCrafts />
+    <div className="pt-16 pb-32">
+      <div className="container-wide">
+        <div className="max-w-(--content-width)">
+          <IntroSection />
+        </div>
+      </div>
+      <VisualCrafts />
     </div>
   );
 }

@@ -6,6 +6,16 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   pageExtensions: ['md', 'mdx', 'ts', 'tsx'],
   reactStrictMode: true,
+  async redirects() {
+    return [
+      { source: '/crafts', destination: '/making', permanent: true },
+      {
+        source: '/crafts/:slug',
+        destination: '/making/:slug',
+        permanent: true,
+      },
+    ];
+  },
   experimental: {
     mdxRs: {
       mdxType: 'gfm',
