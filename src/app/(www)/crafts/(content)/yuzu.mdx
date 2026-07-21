@@ -7,20 +7,22 @@ export const metadata = {
   media: [
     {
       type: "video",
-      src: "/images/crafts/yuzu.webm",
+      src: "https://res.cloudinary.com/dum8sg7sy/video/upload/q_auto:best/crafts/yuzu.webm",
       alt: "Yuzu hiding on click and peeking back in",
       aspectRatio: "1 / 1",
       width: 152,
     },
     {
       type: "video",
-      src: "/images/crafts/yuzu.mp4",
+      src: "https://res.cloudinary.com/dum8sg7sy/video/upload/q_auto:best/crafts/yuzu-mp4.mp4",
       alt: "Yuzu hiding on click and peeking back in",
     },
   ],
 };
 
 import { BlurVideo } from "@/common/components/blur-video/blur-video";
+
+export const CDN = "https://res.cloudinary.com/dum8sg7sy/video/upload/q_auto:best/crafts";
 
 export function Clip({ name, caption }) {
   return (
@@ -29,8 +31,8 @@ export function Clip({ name, caption }) {
         <BlurVideo
           aspectRatio="1 / 1"
           className="border border-border"
-          mp4Src={`/images/crafts/${name}.mp4`}
-          src={`/images/crafts/${name}.webm`}
+          mp4Src={`${CDN}/${name}-mp4.mp4`}
+          src={`${CDN}/${name}.webm`}
         />
       </div>
       <figcaption className="mt-2 text-xs text-text-tertiary">
@@ -165,5 +167,7 @@ The pause is the part people feel. Animating nothing for 0.8 seconds is still an
   <Clip name="yuzu-return" caption="bolts, hides, creeps back" />
   <Clip name="yuzu-return-wrong" caption="no pause, straight back" />
 </ClipRow>
+
+---
 
 Every detail here is almost too small to notice on its own. Together, they're the whole character. That's the thing about small details: none of them matter until all of them do.
