@@ -14,6 +14,7 @@ export type CraftMeta = {
   slug: string;
   title: string;
   description: string;
+  shortDescription?: string;
   publishedAt: string;
   tags: string[];
   media?: MediaItem[];

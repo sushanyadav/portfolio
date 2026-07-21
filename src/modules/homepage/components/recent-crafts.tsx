@@ -36,7 +36,7 @@ export async function RecentCrafts() {
     return {
       slug: craft.slug,
       title: craft.title,
-      description: craft.description,
+      description: craft.shortDescription ?? craft.description,
       publishedAt: craft.publishedAt,
       previewSrc: preview?.src ?? null,
       previewType: preview?.type ?? null,
