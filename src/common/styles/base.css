@@ -5,10 +5,36 @@
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* reserve the gutter so pages with/without scrollbars don't shift */
-    scrollbar-gutter: stable;
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-border-hover) transparent;
+  }
+
+  /* firefox: standard properties (would override the webkit ones in chrome,
+     so they stay behind this gate) */
+  @supports (-moz-appearance: none) {
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-border-hover) var(--color-bg);
+    }
+  }
+
+  /* chrome/safari: author-painted scrollbars, immune to browser themes and
+     color-scheme repaint bugs */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--color-bg);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border-hover);
+    border: 2px solid var(--color-bg);
+    border-radius: 9999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-tertiary);
   }
 
   *,
@@ -19,11 +45,11 @@
 
   html,
   body {
-    min-height: calc(
-      100vh - env(safe-area-inset-top) - env(safe-area-inset-bottom)
-    );
+    height: 100%;
+    overflow: hidden;
   }
 
+  html,
   body {
     background-color: var(--color-bg);
     color: var(--color-text-primary);

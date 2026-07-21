@@ -9,7 +9,7 @@ export function PageBurst({ children }: PropsWithChildren) {
 
   return (
     <div
-      className="relative flex min-h-screen flex-col"
+      className="relative flex h-dvh flex-col overflow-hidden"
       onPointerDown={burst.onPointerDown}
       onTouchStart={burst.onTouchStart}
     >

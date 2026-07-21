@@ -61,10 +61,11 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') setActive(null);
     };
-    document.body.style.overflow = 'hidden';
+    const scroller = document.getElementById('scroll-root');
+    if (scroller) scroller.style.overflowY = 'hidden';
     window.addEventListener('keydown', onKey);
     return () => {
-      document.body.style.overflow = '';
+      if (scroller) scroller.style.overflowY = '';
       window.removeEventListener('keydown', onKey);
     };
   }, [active]);
