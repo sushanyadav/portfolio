@@ -12,6 +12,7 @@ export async function VisualCrafts() {
     year: new Date(craft.publishedAt).getFullYear(),
     media: craft.media ?? [],
     visual: craft.visual,
+    breakAfter: craft.breakAfter,
   }));
 
   if (items.length === 0) return null;

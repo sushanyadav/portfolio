@@ -29,6 +29,8 @@ export type CraftMeta = {
   visual?: boolean;
   /** explicit homepage position; unordered items follow by date */
   order?: number;
+  /** force the next showcase card onto a new row */
+  breakAfter?: boolean;
 };
 
 const CRAFTS_DIR = path.join(

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   AnimatePresence,
@@ -6,23 +6,27 @@ import {
   MotionConfig,
   useMotionValue,
   useSpring,
-} from 'motion/react';
-import Link from 'next/link';
-import { useCallback, useEffect, useRef, useState } from 'react';
+} from "motion/react";
+import Link from "next/link";
+import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
 import {
   CraftTile,
   mediaRatio,
   type TileCraft,
-} from '@/modules/crafts/components/craft-tile';
+} from "@/modules/crafts/components/craft-tile";
 
-export type ShowcaseCraft = TileCraft & { visual?: boolean; caption?: string };
+export type ShowcaseCraft = TileCraft & {
+  visual?: boolean;
+  caption?: string;
+  breakAfter?: boolean;
+};
 
 type VisualShowcaseProps = {
   crafts: ShowcaseCraft[];
 };
 
-const spring = { type: 'spring', stiffness: 300, damping: 30 } as const;
+const spring = { type: "spring", stiffness: 300, damping: 30 } as const;
 
 // the expanded card fills the screen: height drives on wide viewports, the
 // viewport width caps tall ones, and it never upscales past ~native pixels
@@ -31,11 +35,11 @@ function expandedMaxWidth(
   naturalWidth: number | null,
 ): string {
   const raw = craft.media[0]?.aspectRatio;
-  const [w, h] = raw ? raw.split('/').map((n) => parseFloat(n)) : [16, 10];
+  const [w, h] = raw ? raw.split("/").map((n) => parseFloat(n)) : [16, 10];
   const ratio = w && h ? w / h : 1.6;
-  const parts = [`calc((100dvh - 7rem) * ${ratio})`, 'calc(100vw - 3rem)'];
+  const parts = [`calc((100dvh - 7rem) * ${ratio})`, "calc(100vw - 3rem)"];
   if (naturalWidth) parts.push(`${Math.round(naturalWidth * 1.25)}px`);
-  return `min(${parts.join(', ')})`;
+  return `min(${parts.join(", ")})`;
 }
 
 function TileCaption({
@@ -80,7 +84,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
 
   useEffect(() => {
     setCanHover(
-      window.matchMedia('(pointer: fine) and (hover: hover)').matches,
+      window.matchMedia("(pointer: fine) and (hover: hover)").matches,
     );
   }, []);
 
@@ -105,21 +109,21 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
+      if (e.key === "Escape") close();
     };
-    const scroller = document.getElementById('scroll-root');
-    if (scroller) scroller.style.overflowY = 'hidden';
-    window.addEventListener('keydown', onKey);
+    const scroller = document.getElementById("scroll-root");
+    if (scroller) scroller.style.overflowY = "hidden";
+    window.addEventListener("keydown", onKey);
     return () => {
-      if (scroller) scroller.style.overflowY = '';
-      window.removeEventListener('keydown', onKey);
+      if (scroller) scroller.style.overflowY = "";
+      window.removeEventListener("keydown", onKey);
     };
   }, [active, close]);
 
   return (
     <MotionConfig reducedMotion="never">
       <div
-        className="flex flex-wrap items-start gap-8"
+        className="-mb-8 flex flex-wrap items-start gap-x-8"
         onMouseLeave={() => setHoverCaption(null)}
         onMouseMove={canHover ? onGridMouseMove : undefined}
       >
@@ -128,11 +132,13 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
           // card in a row share one height, so rows fill the container with
           // no voids; heights differ between rows, not within them.
           const ratio = mediaRatio(craft);
+          // cards carry the row gap as margin so the zero-height break line
+          // doesn't double it the way row-gap would
           const cardClass =
-            'max-md:w-full min-w-0 md:grow-(--grow) md:basis-(--basis)';
+            "mb-8 max-md:w-full min-w-0 md:grow-(--grow) md:basis-(--basis)";
           const cardStyle = {
-            '--grow': ratio * 100,
-            '--basis': `${ratio * 15}rem`,
+            "--grow": ratio * 100,
+            "--basis": `${ratio * 15}rem`,
           } as unknown as React.CSSProperties;
 
           if (!craft.visual) {
@@ -154,64 +160,69 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
           const isActive = active?.slug === craft.slug;
 
           return (
-            <div
-              key={craft.slug}
-              className={`group ${cardClass}`}
-              style={cardStyle}
-              onMouseEnter={() => setHoverCaption(craft.caption ?? null)}
-              onMouseLeave={() => setHoverCaption(null)}
-            >
-              {/* placeholder holds the grid slot while the tile is expanded */}
-              {isActive && (
-                <div
-                  aria-hidden
-                  className="invisible w-full"
-                  style={{ aspectRatio: ratio }}
-                />
-              )}
-              {/* one persistent element: the tile itself morphs into the
-                  spotlight, so playback continues and nothing crossfades */}
-              <motion.button
-                layout
-                aria-label={isActive ? 'close' : `view ${craft.title}`}
-                className={
-                  isActive
-                    ? 'bg-bg fixed inset-0 z-50 m-auto block h-fit w-full cursor-zoom-out text-left'
-                    : `focus-ring bg-bg block w-full cursor-zoom-in text-left ${
-                        elevated === craft.slug ? 'relative z-50' : ''
-                      }`
-                }
-                style={
-                  isActive
-                    ? { maxWidth: expandedMaxWidth(craft, naturalWidth) }
-                    : undefined
-                }
-                transition={spring}
-                type="button"
-                onClick={(e) => {
-                  if (isActive) {
-                    close();
-                    return;
-                  }
-                  const video = e.currentTarget.querySelector('video');
-                  setNaturalWidth(video?.videoWidth || null);
-                  if (elevationTimer.current)
-                    window.clearTimeout(elevationTimer.current);
-                  setElevated(craft.slug);
-                  setActive(craft);
-                }}
+            <Fragment key={craft.slug}>
+              <div
+                className={`group ${cardClass}`}
+                style={cardStyle}
+                onMouseEnter={() => setHoverCaption(craft.caption ?? null)}
+                onMouseLeave={() => setHoverCaption(null)}
               >
-                <CraftTile craft={craft} expanded={isActive} />
-                {isActive ? (
-                  <p className="text-text-tertiary mt-2 text-xs lowercase">
-                    {craft.title}
-                    {craft.caption && <span> &middot; {craft.caption}</span>}
-                  </p>
-                ) : (
-                  <TileCaption craft={craft} />
+                {/* placeholder holds the grid slot while the tile is expanded */}
+                {isActive && (
+                  <div
+                    aria-hidden
+                    className="invisible w-full"
+                    style={{ aspectRatio: ratio }}
+                  />
                 )}
-              </motion.button>
-            </div>
+                {/* one persistent element: the tile itself morphs into the
+                  spotlight, so playback continues and nothing crossfades */}
+                <motion.button
+                  layout
+                  aria-label={isActive ? "close" : `view ${craft.title}`}
+                  className={
+                    isActive
+                      ? "fixed inset-0 z-50 m-auto block h-fit w-full cursor-zoom-out text-left"
+                      : `focus-ring bg-bg block w-full cursor-zoom-in text-left ${
+                          elevated === craft.slug ? "relative z-50" : ""
+                        }`
+                  }
+                  style={
+                    isActive
+                      ? { maxWidth: expandedMaxWidth(craft, naturalWidth) }
+                      : undefined
+                  }
+                  transition={spring}
+                  type="button"
+                  onClick={(e) => {
+                    if (isActive) {
+                      close();
+                      return;
+                    }
+                    const video = e.currentTarget.querySelector("video");
+                    setNaturalWidth(video?.videoWidth || null);
+                    if (elevationTimer.current)
+                      window.clearTimeout(elevationTimer.current);
+                    setElevated(craft.slug);
+                    setActive(craft);
+                  }}
+                >
+                  <CraftTile craft={craft} expanded={isActive} />
+                  {isActive ? (
+                    <p className="text-text-tertiary mt-2 text-xs lowercase">
+                      {craft.title}
+                      {craft.caption && <span> &middot; {craft.caption}</span>}
+                    </p>
+                  ) : (
+                    <TileCaption craft={craft} />
+                  )}
+                </motion.button>
+              </div>
+              {/* zero-height full-width flex item forces the next row */}
+              {craft.breakAfter && (
+                <div aria-hidden className="hidden h-0 w-full md:block" />
+              )}
+            </Fragment>
           );
         })}
       </div>
@@ -225,7 +236,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
               exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.1 } }}
               initial={{ opacity: 0, scale: 0.96 }}
               style={{ x: capX, y: capY }}
-              transition={{ duration: 0.15, ease: 'easeOut' }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
             >
               {hoverCaption}
             </motion.div>
@@ -238,7 +249,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
           <motion.div
             animate={{ opacity: 1 }}
             aria-hidden
-            className="bg-bg/80 fixed inset-0 z-40 cursor-zoom-out backdrop-blur-sm"
+            className="bg-bg/90 fixed inset-0 z-40 cursor-zoom-out backdrop-blur-sm"
             exit={{ opacity: 0 }}
             initial={{ opacity: 0 }}
             onClick={close}
