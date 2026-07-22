@@ -5,11 +5,21 @@ import {
   motion,
   MotionConfig,
   useMotionValue,
+  useMotionValueEvent,
+  useScroll,
   useSpring,
 } from "motion/react";
 import Link from "next/link";
-import { Fragment, useCallback, useEffect, useRef, useState } from "react";
+import {
+  Fragment,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
+import { cn } from "@/common/functions/cn";
 import {
   CraftTile,
   mediaRatio,
@@ -82,6 +92,16 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
   const capX = useSpring(mouseX, { stiffness: 1300, damping: 70 });
   const capY = useSpring(mouseY, { stiffness: 1300, damping: 70 });
 
+  // scroll moves cards under a still cursor; hide until the next mouse move
+  const capVisibility = useMotionValue<"visible" | "hidden">("visible");
+  const scrollerRef = useRef<HTMLElement | null>(null);
+  // set before useScroll reads it
+  useLayoutEffect(() => {
+    scrollerRef.current = document.getElementById("scroll-root");
+  }, []);
+  const { scrollY } = useScroll({ container: scrollerRef });
+  useMotionValueEvent(scrollY, "change", () => capVisibility.set("hidden"));
+
   useEffect(() => {
     setCanHover(
       window.matchMedia("(pointer: fine) and (hover: hover)").matches,
@@ -102,8 +122,21 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
     (e: React.MouseEvent) => {
       mouseX.set(e.clientX + 16);
       mouseY.set(e.clientY + 18);
+      capVisibility.set("visible");
     },
-    [mouseX, mouseY],
+    [mouseX, mouseY, capVisibility],
+  );
+
+  // jump source + spring so the box appears at the cursor, no travel
+  const onCardEnter = useCallback(
+    (e: React.MouseEvent, caption: string | null) => {
+      mouseX.jump(e.clientX + 16);
+      mouseY.jump(e.clientY + 18);
+      capX.jump(e.clientX + 16);
+      capY.jump(e.clientY + 18);
+      setHoverCaption(caption);
+    },
+    [mouseX, mouseY, capX, capY],
   );
 
   useEffect(() => {
@@ -132,8 +165,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
           // card in a row share one height, so rows fill the container with
           // no voids; heights differ between rows, not within them.
           const ratio = mediaRatio(craft);
-          // cards carry the row gap as margin so the zero-height break line
-          // doesn't double it the way row-gap would
+          // margin instead of row-gap so the break line doesn't double it
           const cardClass =
             "mb-8 max-md:w-full min-w-0 md:grow-(--grow) md:basis-(--basis)";
           const cardStyle = {
@@ -145,10 +177,10 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
             return (
               <Link
                 key={craft.slug}
-                className={`group block ${cardClass}`}
+                className={cn("group block", cardClass)}
                 href={`/making/${craft.slug}`}
                 style={cardStyle}
-                onMouseEnter={() => setHoverCaption(craft.caption ?? null)}
+                onMouseEnter={(e) => onCardEnter(e, craft.caption ?? null)}
                 onMouseLeave={() => setHoverCaption(null)}
               >
                 <CraftTile craft={craft} />
@@ -162,9 +194,9 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
           return (
             <Fragment key={craft.slug}>
               <div
-                className={`group ${cardClass}`}
+                className={cn("group", cardClass)}
                 style={cardStyle}
-                onMouseEnter={() => setHoverCaption(craft.caption ?? null)}
+                onMouseEnter={(e) => onCardEnter(e, craft.caption ?? null)}
                 onMouseLeave={() => setHoverCaption(null)}
               >
                 {/* placeholder holds the grid slot while the tile is expanded */}
@@ -180,13 +212,12 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
                 <motion.button
                   layout
                   aria-label={isActive ? "close" : `view ${craft.title}`}
-                  className={
+                  className={cn(
                     isActive
                       ? "fixed inset-0 z-50 m-auto block h-fit w-full cursor-zoom-out text-left"
-                      : `focus-ring bg-bg block w-full cursor-zoom-in text-left ${
-                          elevated === craft.slug ? "relative z-50" : ""
-                        }`
-                  }
+                      : "focus-ring bg-bg block w-full cursor-zoom-in text-left",
+                    !isActive && elevated === craft.slug && "relative z-50",
+                  )}
                   style={
                     isActive
                       ? { maxWidth: expandedMaxWidth(craft, naturalWidth) }
@@ -235,7 +266,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
               className="border-border bg-bg text-text-secondary pointer-events-none fixed top-0 left-0 z-40 max-w-64 border px-2 py-1 text-xs lowercase"
               exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.1 } }}
               initial={{ opacity: 0, scale: 0.96 }}
-              style={{ x: capX, y: capY }}
+              style={{ x: capX, y: capY, visibility: capVisibility }}
               transition={{ duration: 0.15, ease: "easeOut" }}
             >
               {hoverCaption}
