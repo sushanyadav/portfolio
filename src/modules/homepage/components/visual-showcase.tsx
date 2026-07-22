@@ -209,7 +209,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
                 >
                   <CraftTile craft={craft} expanded={isActive} />
                   {isActive ? (
-                    <p className="from-bg via-bg/70 to-bg/0 -mx-3 bg-linear-to-b px-3 pt-2 pb-6 text-xs lowercase text-[color-mix(in_oklab,var(--color-text-tertiary),var(--color-text-secondary))]">
+                    <p className="mt-2 text-xs lowercase text-[color-mix(in_oklab,var(--color-text-tertiary),var(--color-text-secondary))]">
                       {craft.title}
                       {craft.caption && <span> &middot; {craft.caption}</span>}
                     </p>
