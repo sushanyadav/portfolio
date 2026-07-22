@@ -200,9 +200,6 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
                   setElevated(craft.slug);
                   setActive(craft);
                 }}
-                onLayoutAnimationComplete={() => {
-                  if (!isActive && elevated === craft.slug) setElevated(null);
-                }}
               >
                 <CraftTile craft={craft} expanded={isActive} />
                 {isActive ? (
