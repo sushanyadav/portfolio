@@ -1,7 +1,12 @@
 "use client";
 
-import { Tooltip } from "@base-ui/react/tooltip";
-import { AnimatePresence, motion, MotionConfig } from "motion/react";
+import {
+  AnimatePresence,
+  motion,
+  MotionConfig,
+  useMotionValue,
+  useSpring,
+} from "motion/react";
 import Link from "next/link";
 import { Fragment, useCallback, useEffect, useRef, useState } from "react";
 
@@ -62,31 +67,26 @@ function TileCaption({
   );
 }
 
-// cursor-following description; Tooltip.Root's trackCursorAxis anchors the
-// popup to the mouse instead of the trigger
-function CaptionPopup({ caption }: { caption?: string }) {
-  return (
-    <Tooltip.Portal>
-      <Tooltip.Positioner
-        align="start"
-        className="z-40"
-        side="bottom"
-        sideOffset={18}
-      >
-        <Tooltip.Popup className="border-border bg-bg text-text-secondary pointer-events-none max-w-64 origin-(--transform-origin) border px-2 py-1 text-xs lowercase transition-[opacity,transform] duration-150 ease-out data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0">
-          {caption}
-        </Tooltip.Popup>
-      </Tooltip.Positioner>
-    </Tooltip.Portal>
-  );
-}
-
 export function VisualShowcase({ crafts }: VisualShowcaseProps) {
   const [active, setActive] = useState<ShowcaseCraft | null>(null);
   const [naturalWidth, setNaturalWidth] = useState<number | null>(null);
   // keeps the collapsing card above its siblings until it lands
   const [elevated, setElevated] = useState<string | null>(null);
   const elevationTimer = useRef<number | null>(null);
+
+  // description follows the cursor while hovering a card
+  const [hoverCaption, setHoverCaption] = useState<string | null>(null);
+  const [canHover, setCanHover] = useState(false);
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const capX = useSpring(mouseX, { stiffness: 1300, damping: 70 });
+  const capY = useSpring(mouseY, { stiffness: 1300, damping: 70 });
+
+  useEffect(() => {
+    setCanHover(
+      window.matchMedia("(pointer: fine) and (hover: hover)").matches,
+    );
+  }, []);
 
   const close = useCallback(() => {
     setActive(null);
@@ -97,6 +97,14 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
     if (elevationTimer.current) window.clearTimeout(elevationTimer.current);
     elevationTimer.current = window.setTimeout(() => setElevated(null), 700);
   }, []);
+
+  const onGridMouseMove = useCallback(
+    (e: React.MouseEvent) => {
+      mouseX.set(e.clientX + 16);
+      mouseY.set(e.clientY + 18);
+    },
+    [mouseX, mouseY],
+  );
 
   useEffect(() => {
     if (!active) return;
@@ -114,7 +122,11 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
 
   return (
     <MotionConfig reducedMotion="never">
-      <div className="-mb-8 flex flex-wrap items-start gap-x-8">
+      <div
+        className="-mb-8 flex flex-wrap items-start gap-x-8"
+        onMouseLeave={() => setHoverCaption(null)}
+        onMouseMove={canHover ? onGridMouseMove : undefined}
+      >
         {crafts.map((craft) => {
           // justified rows: growth proportional to aspect ratio makes every
           // card in a row share one height, so rows fill the container with
@@ -131,26 +143,17 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
 
           if (!craft.visual) {
             return (
-              <Tooltip.Root
+              <Link
                 key={craft.slug}
-                disabled={!craft.caption}
-                trackCursorAxis="both"
+                className={`group block ${cardClass}`}
+                href={`/making/${craft.slug}`}
+                style={cardStyle}
+                onMouseEnter={() => setHoverCaption(craft.caption ?? null)}
+                onMouseLeave={() => setHoverCaption(null)}
               >
-                <Tooltip.Trigger
-                  delay={0}
-                  render={
-                    <Link
-                      className={`group block ${cardClass}`}
-                      href={`/making/${craft.slug}`}
-                      style={cardStyle}
-                    />
-                  }
-                >
-                  <CraftTile craft={craft} />
-                  <TileCaption craft={craft} readable />
-                </Tooltip.Trigger>
-                <CaptionPopup caption={craft.caption} />
-              </Tooltip.Root>
+                <CraftTile craft={craft} />
+                <TileCaption craft={craft} readable />
+              </Link>
             );
           }
 
@@ -158,16 +161,12 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
 
           return (
             <Fragment key={craft.slug}>
-              <Tooltip.Root
-                disabled={!craft.caption || active !== null}
-                trackCursorAxis="both"
+              <div
+                className={`group ${cardClass}`}
+                style={cardStyle}
+                onMouseEnter={() => setHoverCaption(craft.caption ?? null)}
+                onMouseLeave={() => setHoverCaption(null)}
               >
-                <Tooltip.Trigger
-                  delay={0}
-                  render={
-                    <div className={`group ${cardClass}`} style={cardStyle} />
-                  }
-                >
                 {/* placeholder holds the grid slot while the tile is expanded */}
                 {isActive && (
                   <div
@@ -218,9 +217,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
                     <TileCaption craft={craft} />
                   )}
                 </motion.button>
-                </Tooltip.Trigger>
-                <CaptionPopup caption={craft.caption} />
-              </Tooltip.Root>
+              </div>
               {/* zero-height full-width flex item forces the next row */}
               {craft.breakAfter && (
                 <div aria-hidden className="hidden h-0 w-full md:block" />
@@ -229,6 +226,23 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
           );
         })}
       </div>
+
+      {canHover && (
+        <AnimatePresence>
+          {hoverCaption && !active && (
+            <motion.div
+              animate={{ opacity: 1, scale: 1 }}
+              className="border-border bg-bg text-text-secondary pointer-events-none fixed top-0 left-0 z-40 max-w-64 border px-2 py-1 text-xs lowercase"
+              exit={{ opacity: 0, scale: 0.96, transition: { duration: 0.1 } }}
+              initial={{ opacity: 0, scale: 0.96 }}
+              style={{ x: capX, y: capY }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+            >
+              {hoverCaption}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
 
       <AnimatePresence>
         {active && (
