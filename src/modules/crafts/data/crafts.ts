@@ -27,6 +27,8 @@ export type CraftMeta = {
   wip?: boolean;
   /** video-only piece: shown big, never gets a detail page */
   visual?: boolean;
+  /** explicit homepage position; unordered items follow by date */
+  order?: number;
 };
 
 const CRAFTS_DIR = path.join(
@@ -70,9 +72,12 @@ export async function getAllCrafts(): Promise<CraftMeta[]> {
     }),
   );
 
-  return crafts.sort(
-    (a, b) =>
-      new Date(b.publishedAt).getTime() -
-      new Date(a.publishedAt).getTime(),
-  );
+  return crafts.sort((a, b) => {
+    const ao = a.order ?? Number.MAX_SAFE_INTEGER;
+    const bo = b.order ?? Number.MAX_SAFE_INTEGER;
+    if (ao !== bo) return ao - bo;
+    return (
+      new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
+    );
+  });
 }

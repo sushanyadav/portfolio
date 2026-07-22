@@ -8,6 +8,7 @@ export async function VisualCrafts() {
   const items = crafts.map((craft) => ({
     slug: craft.slug,
     title: craft.title,
+    caption: craft.shortDescription ?? craft.description,
     year: new Date(craft.publishedAt).getFullYear(),
     media: craft.media ?? [],
     visual: craft.visual,

@@ -43,15 +43,17 @@ export function CraftTile({ craft }: { craft: TileCraft }) {
     );
   }
 
-  // tiles cap at ~416px tall; displayRatio and extreme ratios crop in the
-  // preview (anchored via objectPosition), the spotlight shows the full frame
+  // height caps by orientation: tall media stays compact (416), wide media
+  // can breathe (672). overflow crops in the preview (anchored via
+  // objectPosition); the spotlight shows the full frame
+  const cap = mediaRatio(craft) < 1 ? 'max-h-104' : 'max-h-168';
   return (
     <div
       style={{ '--pos': first.objectPosition ?? 'center' } as CSSProperties}
     >
       <BlurVideo
         aspectRatio={first.displayRatio ?? first.aspectRatio ?? '16 / 10'}
-        className="max-h-104 w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-(--pos)"
+        className={`${cap} w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-(--pos)`}
         mp4Src={mp4}
         src={first.src}
       />
