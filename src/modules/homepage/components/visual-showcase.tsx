@@ -3,13 +3,13 @@
 import {
   AnimatePresence,
   motion,
+  MotionConfig,
   useMotionValue,
   useSpring,
 } from 'motion/react';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
-import { BlurVideo } from '@/common/components/blur-video/blur-video';
 import {
   CraftTile,
   mediaRatio,
@@ -24,17 +24,18 @@ type VisualShowcaseProps = {
 
 const spring = { type: 'spring', stiffness: 300, damping: 30 } as const;
 
-// shared-layout morphs must not crossfade: the see-through mid-flight looks
-// broken. geometry springs, opacity snaps.
-const morph = { ...spring, opacity: { duration: 0 } } as const;
-
-// fill the screen: height drives on wide viewports, the overlay padding
-// caps width on tall ones; media keeps its true ratio
-function spotlightMaxWidth(craft: ShowcaseCraft): string {
+// the expanded card fills the screen: height drives on wide viewports, the
+// viewport width caps tall ones, and it never upscales past ~native pixels
+function expandedMaxWidth(
+  craft: ShowcaseCraft,
+  naturalWidth: number | null,
+): string {
   const raw = craft.media[0]?.aspectRatio;
   const [w, h] = raw ? raw.split('/').map((n) => parseFloat(n)) : [16, 10];
   const ratio = w && h ? w / h : 1.6;
-  return `calc((100dvh - 7rem) * ${ratio})`;
+  const parts = [`calc((100dvh - 7rem) * ${ratio})`, 'calc(100vw - 3rem)'];
+  if (naturalWidth) parts.push(`${Math.round(naturalWidth * 1.25)}px`);
+  return `min(${parts.join(', ')})`;
 }
 
 function TileCaption({
@@ -64,6 +65,10 @@ function TileCaption({
 
 export function VisualShowcase({ crafts }: VisualShowcaseProps) {
   const [active, setActive] = useState<ShowcaseCraft | null>(null);
+  const [naturalWidth, setNaturalWidth] = useState<number | null>(null);
+  // keeps the collapsing card above its siblings until it lands
+  const [elevated, setElevated] = useState<string | null>(null);
+  const elevationTimer = useRef<number | null>(null);
 
   // description follows the cursor while hovering a card
   const [hoverCaption, setHoverCaption] = useState<string | null>(null);
@@ -79,6 +84,16 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
     );
   }, []);
 
+  const close = useCallback(() => {
+    setActive(null);
+    // onLayoutAnimationComplete is unreliable for the collapse; drop the
+    // elevation once the return spring has visually settled. track the timer
+    // so opening another card can cancel it (a stale timer would wipe the
+    // new card's elevation mid-flight)
+    if (elevationTimer.current) window.clearTimeout(elevationTimer.current);
+    elevationTimer.current = window.setTimeout(() => setElevated(null), 700);
+  }, []);
+
   const onGridMouseMove = useCallback(
     (e: React.MouseEvent) => {
       mouseX.set(e.clientX + 16);
@@ -90,7 +105,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setActive(null);
+      if (e.key === 'Escape') close();
     };
     const scroller = document.getElementById('scroll-root');
     if (scroller) scroller.style.overflowY = 'hidden';
@@ -99,10 +114,10 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
       if (scroller) scroller.style.overflowY = '';
       window.removeEventListener('keydown', onKey);
     };
-  }, [active]);
+  }, [active, close]);
 
   return (
-    <>
+    <MotionConfig reducedMotion="never">
       <div
         className="flex flex-wrap items-start gap-8"
         onMouseLeave={() => setHoverCaption(null)}
@@ -136,6 +151,8 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
             );
           }
 
+          const isActive = active?.slug === craft.slug;
+
           return (
             <div
               key={craft.slug}
@@ -144,21 +161,59 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
               onMouseEnter={() => setHoverCaption(craft.caption ?? null)}
               onMouseLeave={() => setHoverCaption(null)}
             >
+              {/* placeholder holds the grid slot while the tile is expanded */}
+              {isActive && (
+                <div
+                  aria-hidden
+                  className="invisible w-full"
+                  style={{ aspectRatio: ratio }}
+                />
+              )}
+              {/* one persistent element: the tile itself morphs into the
+                  spotlight, so playback continues and nothing crossfades */}
               <motion.button
-                aria-label={`view ${craft.title}`}
-                className="focus-ring bg-bg block w-full cursor-zoom-in text-left"
-                layoutId={`visual-${craft.slug}`}
-                style={{
-                  visibility:
-                    active?.slug === craft.slug ? 'hidden' : undefined,
-                }}
-                transition={morph}
+                layout
+                aria-label={isActive ? 'close' : `view ${craft.title}`}
+                className={
+                  isActive
+                    ? 'bg-bg fixed inset-0 z-50 m-auto block h-fit w-full cursor-zoom-out text-left'
+                    : `focus-ring bg-bg block w-full cursor-zoom-in text-left ${
+                        elevated === craft.slug ? 'relative z-50' : ''
+                      }`
+                }
+                style={
+                  isActive
+                    ? { maxWidth: expandedMaxWidth(craft, naturalWidth) }
+                    : undefined
+                }
+                transition={spring}
                 type="button"
-                onClick={() => setActive(craft)}
+                onClick={(e) => {
+                  if (isActive) {
+                    close();
+                    return;
+                  }
+                  const video = e.currentTarget.querySelector('video');
+                  setNaturalWidth(video?.videoWidth || null);
+                  if (elevationTimer.current)
+                    window.clearTimeout(elevationTimer.current);
+                  setElevated(craft.slug);
+                  setActive(craft);
+                }}
+                onLayoutAnimationComplete={() => {
+                  if (!isActive && elevated === craft.slug) setElevated(null);
+                }}
               >
-                <CraftTile craft={craft} />
+                <CraftTile craft={craft} expanded={isActive} />
+                {isActive ? (
+                  <p className="text-text-tertiary mt-2 text-xs lowercase">
+                    {craft.title}
+                    {craft.caption && <span> &middot; {craft.caption}</span>}
+                  </p>
+                ) : (
+                  <TileCaption craft={craft} />
+                )}
               </motion.button>
-              <TileCaption craft={craft} />
             </div>
           );
         })}
@@ -184,26 +239,27 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
       <AnimatePresence>
         {active && (
           <motion.div
-            aria-modal="true"
-            className="fixed inset-0 z-50 flex cursor-zoom-out items-center justify-center p-6"
-            role="dialog"
-            onClick={() => setActive(null)}
-          >
-            <motion.div
-              animate={{ opacity: 1 }}
-              aria-hidden
-              className="bg-bg/80 absolute inset-0 backdrop-blur-sm"
-              exit={{ opacity: 0 }}
-              initial={{ opacity: 0 }}
-            />
+            animate={{ opacity: 1 }}
+            aria-hidden
+            className="bg-bg/80 fixed inset-0 z-40 cursor-zoom-out backdrop-blur-sm"
+            exit={{ opacity: 0 }}
+            initial={{ opacity: 0 }}
+            onClick={close}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {active && (
+          <>
             <motion.button
               animate={{ opacity: 1 }}
               aria-label="close"
-              className="hitbox text-text-tertiary hover:text-text-primary fixed top-6 right-6 flex size-8 items-center justify-center transition-colors duration-150 ease-out"
+              className="hitbox text-text-tertiary hover:text-text-primary fixed top-6 right-6 z-60 flex size-8 items-center justify-center transition-colors duration-150 ease-out"
               exit={{ opacity: 0, transition: { duration: 0.08 } }}
               initial={{ opacity: 0 }}
               type="button"
-              onClick={() => setActive(null)}
+              onClick={close}
             >
               <svg
                 className="size-4"
@@ -220,34 +276,17 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
             </motion.button>
             <motion.button
               animate={{ opacity: 1 }}
-              className="hitbox text-text-tertiary hover:text-text-primary fixed right-6 bottom-6 text-xs tracking-widest uppercase transition-colors duration-150 ease-out"
+              className="hitbox text-text-tertiary hover:text-text-primary fixed right-6 bottom-6 z-60 text-xs tracking-widest uppercase transition-colors duration-150 ease-out"
               exit={{ opacity: 0, transition: { duration: 0.08 } }}
               initial={{ opacity: 0 }}
               type="button"
-              onClick={() => setActive(null)}
+              onClick={close}
             >
               close
             </motion.button>
-            <motion.div
-              className="bg-bg relative w-full cursor-zoom-out"
-              layoutId={`visual-${active.slug}`}
-              style={{ maxWidth: spotlightMaxWidth(active) }}
-              transition={morph}
-            >
-              <BlurVideo
-                aspectRatio={active.media[0]?.aspectRatio ?? '16 / 10'}
-                className="border-border w-full border"
-                mp4Src={active.media.find((m) => m.src.endsWith('.mp4'))?.src}
-                src={active.media[0]?.src ?? ''}
-              />
-              <p className="text-text-tertiary mt-2 text-xs lowercase">
-                {active.title}
-                {active.caption && <span> &middot; {active.caption}</span>}
-              </p>
-            </motion.div>
-          </motion.div>
+          </>
         )}
       </AnimatePresence>
-    </>
+    </MotionConfig>
   );
 }

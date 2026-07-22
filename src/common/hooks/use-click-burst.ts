@@ -102,6 +102,7 @@ export function useClickBurst(options: UseClickBurstOptions = {}) {
       if (e.pointerType === 'touch') return;
       if (e.button > 0 || e.ctrlKey || e.shiftKey || e.altKey || e.metaKey)
         return;
+      if ((e.target as Element).closest?.('[role="dialog"]')) return;
       doBurst(e.pageX, e.pageY);
     },
     [doBurst],
@@ -111,6 +112,9 @@ export function useClickBurst(options: UseClickBurstOptions = {}) {
     (e: React.TouchEvent) => {
       const touch = e.touches[0];
       if (!touch) return;
+      // bursting inside a modal mutates the DOM mid-tap, which makes iOS
+      // swallow the tap's click — the overlay then needs a second tap to close
+      if ((e.target as Element).closest?.('[role="dialog"]')) return;
       doBurst(touch.pageX, touch.pageY);
     },
     [doBurst],

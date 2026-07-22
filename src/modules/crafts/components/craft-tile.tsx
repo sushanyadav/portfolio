@@ -25,8 +25,15 @@ export function mediaRatio(craft: TileCraft): number {
   return w && h ? w / h : 1.6;
 }
 
-// media fills its card at its own aspect ratio, on every screen size
-export function CraftTile({ craft }: { craft: TileCraft }) {
+// media fills its card at its own aspect ratio, on every screen size.
+// expanded mode drops the caps and display crops to show the full frame.
+export function CraftTile({
+  craft,
+  expanded,
+}: {
+  craft: TileCraft;
+  expanded?: boolean;
+}) {
   const first = craft.media[0];
   if (!first) return null;
 
@@ -52,8 +59,16 @@ export function CraftTile({ craft }: { craft: TileCraft }) {
       style={{ '--pos': first.objectPosition ?? 'center' } as CSSProperties}
     >
       <BlurVideo
-        aspectRatio={first.displayRatio ?? first.aspectRatio ?? '16 / 10'}
-        className={`${cap} w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-(--pos)`}
+        aspectRatio={
+          expanded
+            ? (first.aspectRatio ?? '16 / 10')
+            : (first.displayRatio ?? first.aspectRatio ?? '16 / 10')
+        }
+        className={
+          expanded
+            ? 'w-full border border-border'
+            : `${cap} w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-(--pos)`
+        }
         mp4Src={mp4}
         src={first.src}
       />
