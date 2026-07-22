@@ -14,7 +14,7 @@
 
 @utility focus-ring {
   &:focus-visible {
-    outline: 2px solid var(--color-text-primary);
+    outline: 2px solid var(--color-focus-ring);
     outline-offset: 2px;
   }
 }
