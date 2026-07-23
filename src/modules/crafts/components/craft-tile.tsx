@@ -50,10 +50,9 @@ export function CraftTile({
     );
   }
 
-  // height caps by orientation: tall media stays compact (416), wide media
-  // can breathe (672). overflow crops in the preview (anchored via
-  // objectPosition); the spotlight shows the full frame
-  const cap = mediaRatio(craft) < 1 ? 'max-h-104' : 'max-h-168';
+  // mobile-only height caps; md+ rows already share a computed height
+  const cap =
+    mediaRatio(craft) < 1 ? 'max-md:max-h-104' : 'max-md:max-h-168';
   return (
     <div
       style={{ '--pos': first.objectPosition ?? 'center' } as CSSProperties}
