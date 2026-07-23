@@ -52,7 +52,7 @@ export function CraftTile({
 
   // mobile-only height caps; md+ rows already share a computed height
   const cap =
-    mediaRatio(craft) < 1 ? 'max-md:max-h-104' : 'max-md:max-h-168';
+    mediaRatio(craft) < 1 ? 'max-md:max-h-64' : 'max-md:max-h-168';
   return (
     <div
       style={{ '--pos': first.objectPosition ?? 'center' } as CSSProperties}
