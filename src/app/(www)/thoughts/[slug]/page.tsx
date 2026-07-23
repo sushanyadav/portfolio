@@ -52,7 +52,7 @@ export default async function ThoughtPage({ params }: PageProps) {
   return (
     <article className="container pt-16 pb-32">
       <Link
-        className="text-xs text-text-tertiary transition-colors duration-150 ease-out hover:text-text-secondary"
+        className="hitbox inline-block origin-left text-xs text-text-tertiary transition-[color,scale] duration-150 ease-out hover:text-text-secondary active:scale-95"
         href="/thoughts"
       >
         ← thoughts
