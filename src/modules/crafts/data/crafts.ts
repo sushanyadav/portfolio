@@ -10,6 +10,8 @@ type MediaItem = {
   aspectRatio?: string;
   /** tile-only ratio override; media cover-crops inside it */
   displayRatio?: string;
+  /** tile ratio below md, overrides displayRatio there */
+  mobileDisplayRatio?: string;
   /** crop anchor when displayRatio crops, e.g. "right" */
   objectPosition?: string;
 };

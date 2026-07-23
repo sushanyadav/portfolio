@@ -14,6 +14,7 @@ export type TileCraft = {
     width?: number;
     aspectRatio?: string;
     displayRatio?: string;
+    mobileDisplayRatio?: string;
     objectPosition?: string;
   }>;
 };
@@ -50,23 +51,23 @@ export function CraftTile({
     );
   }
 
-  // mobile-only height caps; md+ rows already share a computed height
-  const cap =
-    mediaRatio(craft) < 1 ? 'max-md:max-h-64' : 'max-md:max-h-168';
+  const tileRatio = first.displayRatio ?? first.aspectRatio ?? '16 / 10';
   return (
     <div
-      style={{ '--pos': first.objectPosition ?? 'center' } as CSSProperties}
+      style={
+        {
+          '--pos': first.objectPosition ?? 'center',
+          '--tile-ar': tileRatio,
+          '--tile-m-ar': first.mobileDisplayRatio ?? tileRatio,
+        } as CSSProperties
+      }
     >
       <BlurVideo
-        aspectRatio={
-          expanded
-            ? (first.aspectRatio ?? '16 / 10')
-            : (first.displayRatio ?? first.aspectRatio ?? '16 / 10')
-        }
+        aspectRatio={expanded ? (first.aspectRatio ?? '16 / 10') : undefined}
         className={
           expanded
             ? 'w-full border border-border'
-            : `${cap} w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-(--pos)`
+            : 'aspect-(--tile-ar) max-md:aspect-(--tile-m-ar) w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-(--pos)'
         }
         mp4Src={mp4}
         src={first.src}

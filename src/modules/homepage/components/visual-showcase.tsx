@@ -170,7 +170,7 @@ export function VisualShowcase({ crafts }: VisualShowcaseProps) {
             "mb-8 max-md:w-full min-w-0 md:grow-(--grow) md:basis-(--basis)";
           const cardStyle = {
             "--grow": ratio * 100,
-            "--basis": `${ratio * 10}rem`,
+            "--basis": `${ratio * 7.5}rem`,
           } as unknown as React.CSSProperties;
 
           if (!craft.visual) {
