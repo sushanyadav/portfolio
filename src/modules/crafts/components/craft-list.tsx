@@ -25,26 +25,58 @@ const springY = { stiffness: 800, damping: 35, mass: 0.3 };
 
 const springScale = { stiffness: 400, damping: 35, mass: 0.8 };
 
+function PreviewVideo({
+  src,
+  playing,
+  className,
+  onLoadedMetadata,
+}: {
+  src: string;
+  playing: boolean;
+  className?: string;
+  onLoadedMetadata?: (e: React.SyntheticEvent<HTMLVideoElement>) => void;
+}) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    if (playing) video.play().catch(() => {});
+    else video.pause();
+  }, [playing]);
+
+  return (
+    <video
+      ref={ref}
+      className={className}
+      loop
+      muted
+      onLoadedMetadata={onLoadedMetadata}
+      playsInline
+      src={src}
+    />
+  );
+}
+
 function MediaEl({
   craft,
   className,
   loading,
   onLoad,
+  playing = true,
 }: {
   craft: CraftPreviewItem;
   className?: string;
   loading?: 'eager' | 'lazy';
   onLoad?: (slug: string, w: number, h: number) => void;
+  playing?: boolean;
 }) {
   if (!craft.previewSrc) return null;
 
   if (craft.previewType === 'video') {
     return (
-      <video
-        autoPlay
+      <PreviewVideo
         className={cn('h-full w-full object-cover', className)}
-        loop
-        muted
         onLoadedMetadata={
           onLoad
             ? (e) =>
@@ -55,7 +87,7 @@ function MediaEl({
                 )
             : undefined
         }
-        playsInline
+        playing={playing}
         src={craft.previewSrc}
       />
     );
@@ -105,6 +137,23 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
   const thumbRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isActive = useRef(false);
   const isSwitching = useRef(false);
+
+  // one observer for the whole list — thumbnails only decode while it's on screen
+  const listRef = useRef<HTMLDivElement>(null);
+  const [listInView, setListInView] = useState(true);
+
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setListInView(entry.isIntersecting),
+      // a full viewport of slack either side — pausing only kicks in once
+      // the list is a whole screen away, so it never reads as a stall
+      { rootMargin: '100% 0px' },
+    );
+    io.observe(list);
+    return () => io.disconnect();
+  }, []);
 
   const onMediaLoad = useCallback(
     (slug: string, naturalW: number, naturalH: number) => {
@@ -183,7 +232,7 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
                 zIndex: hovered === i ? 1 : 0,
               }}
             >
-              <MediaEl craft={c} onLoad={onMediaLoad} />
+              <MediaEl craft={c} onLoad={onMediaLoad} playing={hovered === i} />
             </div>
           );
         })}
@@ -191,6 +240,7 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
 
       {/* Craft rows */}
       <div
+        ref={listRef}
         className="mt-4 flex flex-col"
         onMouseLeave={handleLeave}
         onMouseMove={
@@ -249,7 +299,11 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
                       )}
                       style={{ width: THUMB_W, height: THUMB_H }}
                     >
-                      <MediaEl craft={c} loading="eager" />
+                      <MediaEl
+                        craft={c}
+                        loading="eager"
+                        playing={listInView && !isItemActive}
+                      />
                     </div>
                   </div>
                 )}
