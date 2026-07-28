@@ -34,12 +34,12 @@ export function NotFoundContent() {
         <span>4</span>
       </div>
 
-      <p className="text-sm text-text-secondary">
+      <p className="text-text-secondary text-sm">
         this page doesn&apos;t exist.
       </p>
 
       <Link
-        className="text-xs text-text-tertiary transition-colors duration-150 ease-out hover:text-text-secondary"
+        className="text-text-tertiary hover:text-text-secondary text-xs transition-colors duration-150 ease-out"
         href="/"
       >
         ← back home

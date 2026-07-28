@@ -12,7 +12,7 @@ export async function RecentThoughts() {
         <h2 className="text-sm font-medium">thoughts</h2>
         {recent.length > 0 && (
           <Link
-            className="text-xs text-text-tertiary transition-colors duration-150 ease-out hover:text-text-secondary"
+            className="text-text-tertiary hover:text-text-secondary text-xs transition-colors duration-150 ease-out"
             href="/thoughts"
           >
             view all
@@ -20,19 +20,19 @@ export async function RecentThoughts() {
         )}
       </div>
       {recent.length === 0 ? (
-        <p className="mt-4 text-sm text-text-tertiary">coming soon.</p>
+        <p className="text-text-tertiary mt-4 text-sm">coming soon.</p>
       ) : (
         <div className="mt-4 flex flex-col">
           {recent.map((thought) => (
             <Link
               key={thought.slug}
-              className="group -mx-3 flex items-baseline justify-between gap-4 rounded-none px-3 py-2.5 transition-colors duration-150 ease-out phover:hover:bg-surface-hover"
+              className="group phover:hover:bg-surface-hover -mx-3 flex items-baseline justify-between gap-4 rounded-none px-3 py-2.5 transition-colors duration-150 ease-out"
               href={`/thoughts/${thought.slug}`}
             >
-              <span className="text-sm text-text-secondary transition-colors duration-150 ease-out group-hover:text-text-primary">
+              <span className="text-text-secondary group-hover:text-text-primary text-sm transition-colors duration-150 ease-out">
                 {thought.title}
               </span>
-              <span className="shrink-0 text-xs tabular-nums text-text-tertiary">
+              <span className="text-text-tertiary shrink-0 text-xs tabular-nums">
                 {new Date(thought.publishedAt).toLocaleDateString('en-US', {
                   month: 'short',
                   day: 'numeric',

@@ -35,10 +35,7 @@ export type CraftMeta = {
   breakAfter?: boolean;
 };
 
-const CRAFTS_DIR = path.join(
-  process.cwd(),
-  'src/app/(www)/making/(content)',
-);
+const CRAFTS_DIR = path.join(process.cwd(), 'src/app/(www)/making/(content)');
 
 export function getAllCraftSlugs(): string[] {
   try {
@@ -52,9 +49,7 @@ export function getAllCraftSlugs(): string[] {
 }
 
 export async function getCraftBySlug(slug: string) {
-  const post = await import(
-    `@/app/(www)/making/(content)/${slug}.mdx`
-  );
+  const post = await import(`@/app/(www)/making/(content)/${slug}.mdx`);
   const metadata = post.metadata as Omit<CraftMeta, 'slug'>;
 
   return {

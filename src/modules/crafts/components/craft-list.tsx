@@ -200,43 +200,51 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
   const listHovered = hovered !== null;
   const activeCraft = hovered !== null ? crafts[hovered] : null;
   const defaultSize = { w: MAX_W, h: Math.round(MAX_W * (9 / 16)) };
-  const activeSize = activeCraft ? (sizes[activeCraft.slug] ?? defaultSize) : defaultSize;
+  const activeSize = activeCraft
+    ? (sizes[activeCraft.slug] ?? defaultSize)
+    : defaultSize;
 
   return (
     <>
       {/* Floating preview */}
-      {canHover && <motion.div
-        aria-hidden
-        className="pointer-events-none fixed left-0 top-0 z-50 overflow-hidden transition-[width,height] duration-500 ease-out-quart"
-        style={{
-          x,
-          y,
-          scale,
-          width: activeSize.w,
-          height: activeSize.h,
-          transformOrigin: 'top left',
-        }}
-      >
-        {crafts.map((c, i) => {
-          if (!c.previewSrc) return null;
-          return (
-            <div
-              key={c.slug}
-              className={cn(
-                'absolute inset-0',
-                isSwitching.current &&
-                  'transition-opacity duration-500 ease-out',
-              )}
-              style={{
-                opacity: hovered === i ? 1 : 0,
-                zIndex: hovered === i ? 1 : 0,
-              }}
-            >
-              <MediaEl craft={c} onLoad={onMediaLoad} playing={hovered === i} />
-            </div>
-          );
-        })}
-      </motion.div>}
+      {canHover && (
+        <motion.div
+          aria-hidden
+          className="ease-out-quart pointer-events-none fixed top-0 left-0 z-50 overflow-hidden transition-[width,height] duration-500"
+          style={{
+            x,
+            y,
+            scale,
+            width: activeSize.w,
+            height: activeSize.h,
+            transformOrigin: 'top left',
+          }}
+        >
+          {crafts.map((c, i) => {
+            if (!c.previewSrc) return null;
+            return (
+              <div
+                key={c.slug}
+                className={cn(
+                  'absolute inset-0',
+                  isSwitching.current &&
+                    'transition-opacity duration-500 ease-out',
+                )}
+                style={{
+                  opacity: hovered === i ? 1 : 0,
+                  zIndex: hovered === i ? 1 : 0,
+                }}
+              >
+                <MediaEl
+                  craft={c}
+                  onLoad={onMediaLoad}
+                  playing={hovered === i}
+                />
+              </div>
+            );
+          })}
+        </motion.div>
+      )}
 
       {/* Craft rows */}
       <div
@@ -308,15 +316,15 @@ export function CraftList({ crafts }: { crafts: CraftPreviewItem[] }) {
                   </div>
                 )}
                 <div className="flex flex-col gap-0.5">
-                  <span className="text-sm lowercase text-text-secondary transition-colors duration-150 ease-out group-hover:text-text-primary">
+                  <span className="text-text-secondary group-hover:text-text-primary text-sm lowercase transition-colors duration-150 ease-out">
                     {c.title}
                   </span>
-                  <span className="text-xs lowercase text-text-tertiary">
+                  <span className="text-text-tertiary text-xs lowercase">
                     {c.description}
                   </span>
                 </div>
               </div>
-              <span className="shrink-0 text-xs lowercase tabular-nums text-text-tertiary">
+              <span className="text-text-tertiary shrink-0 text-xs lowercase tabular-nums">
                 {new Date(c.publishedAt).getFullYear()}
               </span>
             </Link>

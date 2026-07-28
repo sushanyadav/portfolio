@@ -11,7 +11,12 @@ type BlurVideoProps = {
   aspectRatio?: string;
 };
 
-export function BlurVideo({ src, mp4Src, className, aspectRatio }: BlurVideoProps) {
+export function BlurVideo({
+  src,
+  mp4Src,
+  className,
+  aspectRatio,
+}: BlurVideoProps) {
   const [ready, setReady] = useState(false);
   // sources attach only once the video nears the viewport
   const [loaded, setLoaded] = useState(false);
@@ -68,7 +73,10 @@ export function BlurVideo({ src, mp4Src, className, aspectRatio }: BlurVideoProp
   }, [loaded]);
 
   return (
-    <div className={cn('relative overflow-hidden bg-bg-secondary', className)} style={aspectRatio ? { aspectRatio } : undefined}>
+    <div
+      className={cn('relative overflow-hidden bg-bg-secondary', className)}
+      style={aspectRatio ? { aspectRatio } : undefined}
+    >
       <video
         ref={videoRef}
         autoPlay

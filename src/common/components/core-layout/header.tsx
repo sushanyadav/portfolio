@@ -25,7 +25,7 @@ function NavLink({
   return (
     <Link
       className={cn(
-        'relative rounded-none px-3 py-1.5 text-sm transition-colors duration-150 ease-out before:absolute before:-inset-2 before:content-[\'\']',
+        "relative rounded-none px-3 py-1.5 text-sm transition-colors duration-150 ease-out before:absolute before:-inset-2 before:content-['']",
         isActive
           ? 'text-text-primary'
           : 'text-text-tertiary hover:text-text-secondary',
@@ -41,10 +41,10 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-10 h-(--header-height) shrink-0 border-b border-border bg-bg">
+    <header className="border-border bg-bg sticky top-0 z-10 h-(--header-height) shrink-0 border-b">
       <div className="container-wide flex h-full items-center justify-between">
         <Link
-          className="flex items-center transition-opacity duration-150 ease-out hover:opacity-70 hitbox"
+          className="hitbox flex items-center transition-opacity duration-150 ease-out hover:opacity-70"
           href="/"
         >
           <Logo className="size-5" />
@@ -64,7 +64,7 @@ export function Header() {
               />
             );
           })}
-          <div className="ml-2 border-l border-border pl-2">
+          <div className="border-border ml-2 border-l pl-2">
             <ThemeToggle />
           </div>
         </nav>

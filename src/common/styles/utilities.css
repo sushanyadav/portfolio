@@ -20,7 +20,7 @@
 }
 
 @utility prose-article {
-  @apply prose prose-sm max-w-none text-text-secondary prose-headings:font-medium prose-headings:tracking-tight prose-headings:text-text-primary prose-p:text-text-secondary prose-a:text-text-primary prose-a:underline-offset-2 prose-strong:text-text-primary prose-code:font-mono prose-code:text-sm prose-code:text-text-primary prose-pre:border prose-pre:border-border prose-pre:bg-bg-secondary prose-li:text-text-secondary prose-li:marker:text-text-tertiary prose-hr:border-border prose-blockquote:border-border prose-blockquote:text-text-tertiary;
+  @apply prose prose-sm text-text-secondary prose-headings:font-medium prose-headings:tracking-tight prose-headings:text-text-primary prose-p:text-text-secondary prose-a:text-text-primary prose-a:underline-offset-2 prose-strong:text-text-primary prose-code:font-mono prose-code:text-sm prose-code:text-text-primary prose-pre:border prose-pre:border-border prose-pre:bg-bg-secondary prose-li:text-text-secondary prose-li:marker:text-text-tertiary prose-hr:border-border prose-blockquote:border-border prose-blockquote:text-text-tertiary max-w-none;
 }
 
 @utility hitbox {

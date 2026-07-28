@@ -49,7 +49,7 @@ export default async function CraftsPage() {
     <div className="container pt-16 pb-32">
       <header className="mb-8">
         <h1 className="text-base font-medium">making</h1>
-        <p className="mt-2 text-sm text-text-secondary">
+        <p className="text-text-secondary mt-2 text-sm">
           written breakdowns of things i&apos;ve built.
         </p>
       </header>

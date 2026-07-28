@@ -8,7 +8,7 @@ export function ThemeToggle() {
   return (
     <button
       aria-label="Toggle theme"
-      className="flex size-8 cursor-pointer items-center justify-center rounded-none text-text-tertiary transition-colors duration-150 ease-out hover:text-text-primary"
+      className="text-text-tertiary hover:text-text-primary flex size-8 cursor-pointer items-center justify-center rounded-none transition-colors duration-150 ease-out"
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
       type="button"
     >

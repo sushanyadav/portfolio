@@ -10,12 +10,7 @@ type UseClickBurstOptions = {
 };
 
 export function useClickBurst(options: UseClickBurstOptions = {}) {
-  const {
-    count = 6,
-    distance = 36,
-    duration = 450,
-    cooldown = 100,
-  } = options;
+  const { count = 6, distance = 36, duration = 450, cooldown = 100 } = options;
 
   const isAnimating = useRef(false);
   const styleSheet = useRef<HTMLStyleElement | null>(null);
@@ -54,7 +49,13 @@ export function useClickBurst(options: UseClickBurstOptions = {}) {
   );
 
   const makeBlock = useCallback(
-    (pos: { x: number; y: number }, angle: number, dist: number, size: number, delay: number) => {
+    (
+      pos: { x: number; y: number },
+      angle: number,
+      dist: number,
+      size: number,
+      delay: number,
+    ) => {
       const el = document.createElement('div');
       const tx = Math.cos((angle * Math.PI) / 180) * dist;
       const ty = Math.sin((angle * Math.PI) / 180) * dist;

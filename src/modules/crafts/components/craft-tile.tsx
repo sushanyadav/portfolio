@@ -44,7 +44,7 @@ export function CraftTile({
     return (
       <BlurImage
         alt={first.alt || craft.title}
-        className="w-full border border-border"
+        className="border-border w-full border"
         sizes="(max-width: 768px) 100vw, 600px"
         src={first.src}
       />
@@ -66,8 +66,8 @@ export function CraftTile({
         aspectRatio={expanded ? (first.aspectRatio ?? '16 / 10') : undefined}
         className={
           expanded
-            ? 'w-full border border-border'
-            : 'aspect-(--tile-ar) max-md:aspect-(--tile-m-ar) w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-(--pos)'
+            ? 'border-border w-full border'
+            : 'border-border aspect-(--tile-ar) w-full border max-md:aspect-(--tile-m-ar) [&>video]:size-full [&>video]:object-cover [&>video]:object-(--pos)'
         }
         mp4Src={mp4}
         src={first.src}

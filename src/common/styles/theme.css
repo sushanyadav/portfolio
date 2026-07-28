@@ -7,7 +7,7 @@
   --color-border: #e5e5e5;
   --color-border-hover: #d4d4d4;
   --color-surface-hover: rgba(0, 0, 0, 0.04);
-  --color-accent: #1768FF;
+  --color-accent: #1768ff;
   --color-focus-ring: #a3a3a3;
 }
 
@@ -20,7 +20,7 @@
   --color-border: #262626;
   --color-border-hover: #404040;
   --color-surface-hover: rgba(255, 255, 255, 0.06);
-  --color-accent: #4D8EFF;
+  --color-accent: #4d8eff;
   --color-focus-ring: #525252;
 }
 
@@ -38,7 +38,7 @@
     --color-border: #262626;
     --color-border-hover: #404040;
     --color-surface-hover: rgba(255, 255, 255, 0.06);
-    --color-accent: #4D8EFF;
+    --color-accent: #4d8eff;
     --color-focus-ring: #525252;
   }
 }

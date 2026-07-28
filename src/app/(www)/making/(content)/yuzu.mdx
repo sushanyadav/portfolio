@@ -1,42 +1,42 @@
 export const metadata = {
-  title: "Yuzu",
-  description: "a shy mascot that hides on click and peeks back in.",
-  shortDescription: "a shy mascot.",
+  title: 'Yuzu',
+  description: 'a shy mascot that hides on click and peeks back in.',
+  shortDescription: 'a shy mascot.',
   order: 10,
-  publishedAt: "2026-02-04",
-  tags: ["interaction", "gsap", "animation"],
-  url: "https://capy.ai",
+  publishedAt: '2026-02-04',
+  tags: ['interaction', 'gsap', 'animation'],
+  url: 'https://capy.ai',
   media: [
     {
-      type: "video",
-      src: "https://res.cloudinary.com/dum8sg7sy/video/upload/crafts/yuzu-main.webm",
-      alt: "Yuzu hiding on click and peeking back in",
-      aspectRatio: "1 / 1",
-      displayRatio: "3 / 4",
-      mobileDisplayRatio: "5 / 4",
-      objectPosition: "right",
+      type: 'video',
+      src: 'https://res.cloudinary.com/dum8sg7sy/video/upload/crafts/yuzu-main.webm',
+      alt: 'Yuzu hiding on click and peeking back in',
+      aspectRatio: '1 / 1',
+      displayRatio: '3 / 4',
+      mobileDisplayRatio: '5 / 4',
+      objectPosition: 'right',
     },
     {
-      type: "video",
-      src: "https://res.cloudinary.com/dum8sg7sy/video/upload/crafts/yuzu-main-mp4.mp4",
-      alt: "Yuzu hiding on click and peeking back in",
+      type: 'video',
+      src: 'https://res.cloudinary.com/dum8sg7sy/video/upload/crafts/yuzu-main-mp4.mp4',
+      alt: 'Yuzu hiding on click and peeking back in',
     },
   ],
 };
 
-import { BlurVideo } from "@/common/components/blur-video/blur-video";
+import { BlurVideo } from '@/common/components/blur-video/blur-video';
 
-export const CDN = "https://res.cloudinary.com/dum8sg7sy/video/upload/crafts";
+export const CDN = 'https://res.cloudinary.com/dum8sg7sy/video/upload/crafts';
 
 export function Clip({ name, caption, wide }) {
   return (
     <figure className="m-0 min-w-0 flex-1">
       <BlurVideo
-        aspectRatio={wide ? undefined : "1 / 1"}
+        aspectRatio={wide ? undefined : '1 / 1'}
         className={
           wide
-            ? "h-96 w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-right"
-            : "border border-border max-sm:h-76 max-sm:w-full [&>video]:max-sm:size-full [&>video]:max-sm:object-cover [&>video]:max-sm:object-right"
+            ? 'h-96 w-full border border-border [&>video]:size-full [&>video]:object-cover [&>video]:object-right'
+            : 'border border-border max-sm:h-76 max-sm:w-full [&>video]:max-sm:size-full [&>video]:max-sm:object-cover [&>video]:max-sm:object-right'
         }
         mp4Src={`${CDN}/${name}-mp4.mp4`}
         src={`${CDN}/${name}.webm`}
@@ -65,12 +65,12 @@ Think about peeking around a corner to check if someone's there. You edge out a 
 A smooth glide works for most things on a page. It just can't act shy. So yuzu got its own speed curve:
 
 ```js
-CustomEase.create("peekIn", "0.165, 0.84, 0.82, 0.78");
+CustomEase.create('peekIn', '0.165, 0.84, 0.82, 0.78');
 
 gsap.fromTo(
   el,
   { xPercent: 120 },
-  { xPercent: 0, duration: 1.4, ease: "peekIn" },
+  { xPercent: 0, duration: 1.4, ease: 'peekIn' },
 );
 ```
 
@@ -82,7 +82,7 @@ That leftover motion needs somewhere to go. Soft things don't just stop, they sq
 keyframes: [
   { scaleX: 1.15, duration: 0.12 },
   { scaleX: 0.95, duration: 0.1 },
-  { scaleX: 1, duration: 0.15, ease: "easeOutQuad" },
+  { scaleX: 1, duration: 0.15, ease: 'easeOutQuad' },
 ];
 ```
 
@@ -108,7 +108,7 @@ The blink itself is just the eyes squeezed to a line and back, 0.08 seconds each
 Hover over yuzu and it blinks once and leans toward you a little, like a pet noticing your hand before you pet it:
 
 ```js
-gsap.to(el, { xPercent: 12, duration: 0.3, ease: "easeOutQuart" });
+gsap.to(el, { xPercent: 12, duration: 0.3, ease: 'easeOutQuart' });
 ```
 
 <ClipRow>
@@ -132,7 +132,7 @@ gsap.to(eyes, { scaleX: 0.1, duration: 0.08, yoyo: true, repeat: 1 });
 Press a gummy bear against a table. It doesn't shrink. It flattens where you push and bulges where you don't. To get that on screen, one decision matters before any animation: which part of yuzu stays pinned when it changes shape.
 
 ```js
-gsap.set(el, { transformOrigin: "center right" });
+gsap.set(el, { transformOrigin: 'center right' });
 ```
 
 Yuzu's right edge is glued to the screen, so that edge stays pinned. Now pressing it squishes it against its own wall:
@@ -166,7 +166,7 @@ That's the whole design of the click:
 returnTl
   .to(el, { scaleX: 1, scaleY: 1, xPercent: 120, duration: 0.3 }) // bolt, fast
   .to(el, { xPercent: 120, duration: 0.8 }) // hide, do nothing
-  .to(el, { xPercent: 0, duration: 1.4, ease: "peekIn" }); // creep back out
+  .to(el, { xPercent: 0, duration: 1.4, ease: 'peekIn' }); // creep back out
 ```
 
 0.3 seconds to bolt. Then 0.8 seconds of nothing, which is yuzu deciding whether you can be trusted. Then the same slow peek-in from the start, wobble included.

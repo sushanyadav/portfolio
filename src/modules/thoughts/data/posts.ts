@@ -9,10 +9,7 @@ export type ThoughtMeta = {
   tags: string[];
 };
 
-const POSTS_DIR = path.join(
-  process.cwd(),
-  'src/app/(www)/thoughts/(content)',
-);
+const POSTS_DIR = path.join(process.cwd(), 'src/app/(www)/thoughts/(content)');
 
 export function getAllThoughtSlugs(): string[] {
   try {

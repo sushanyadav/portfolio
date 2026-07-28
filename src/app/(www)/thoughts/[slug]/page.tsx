@@ -52,7 +52,7 @@ export default async function ThoughtPage({ params }: PageProps) {
   return (
     <article className="container pt-16 pb-32">
       <Link
-        className="hitbox inline-block origin-left text-xs text-text-tertiary transition-[color,scale] duration-150 ease-out hover:text-text-secondary active:scale-95"
+        className="hitbox text-text-tertiary hover:text-text-secondary inline-block origin-left text-xs transition-[color,scale] duration-150 ease-out active:scale-95"
         href="/thoughts"
       >
         ← thoughts
@@ -60,7 +60,7 @@ export default async function ThoughtPage({ params }: PageProps) {
 
       <header className="mt-8 mb-10">
         <time
-          className="text-xs text-text-tertiary"
+          className="text-text-tertiary text-xs"
           dateTime={metadata.publishedAt}
         >
           {new Date(metadata.publishedAt).toLocaleDateString('en-US', {

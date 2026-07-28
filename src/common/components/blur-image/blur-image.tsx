@@ -37,9 +37,7 @@ export function BlurImage({
         alt={alt}
         className={cn(
           'w-full transition-[filter,opacity] duration-700 ease-out',
-          loaded
-            ? 'opacity-100 blur-0'
-            : 'opacity-100 blur-xl scale-110',
+          loaded ? 'opacity-100 blur-0' : 'opacity-100 blur-xl scale-110',
         )}
         loading={priority ? 'eager' : 'lazy'}
         onLoad={() => setLoaded(true)}
